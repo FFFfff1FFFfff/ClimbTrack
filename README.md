@@ -6,7 +6,6 @@ ClimbTrack is a web-based training log tool for indoor climbers. It helps users 
 ## Target Users
 
 - Indoor climbers of all levels seeking structured training feedback  
-- Coaches supporting multiple climbers  
 - Climbers preparing for competitions or training cycles  
 
 Users want to:
@@ -20,22 +19,18 @@ Users want to:
 ### Core Features:
 - Log climb sessions (date, location, grade/difficulty)  
 - Add movement notes (beta, style, crux descriptions)  
-- Upload and store media files (photos and videos)  
-- Visual goal tracking board  
+- Upload and store media files (photos and videos)
+- Detect the number of people in the climbing gym (number and activities)
 
-### Nice-to-Have Features:
-- Share logs with coaches or friends  
-- Integrated timeline view  
 
 ## Timeline
 | Week | Tasks |
 |------|-------|
-| 1–2  | Set up repo, define data models, create wireframes |
-| 3–4  | Implement core logging system |
+| 1–2  | Develop basic UI for all core screens |
+| 3–4  | Implement personal profile and history screens |
 | 5–6  | Develop media upload/storage system |
-| 7    | Build goal tracker and progress chart components |
-| 8    | Perform testing, UI refinements, and bug fixes |
-| 9    | Launch MVP and collect initial user feedback |
+| 7    | Integrate media upload and backend storage |
+| 8-9  | Refine and implement crowd detection and activity monitory |
 
 ## Contact Information
 
