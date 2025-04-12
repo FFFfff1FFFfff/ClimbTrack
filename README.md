@@ -1,7 +1,7 @@
 # ClimbTrack: Indoor Climbing Training Logger
 ## Project Scope
 
-ClimbTrack is a web-based training log tool for indoor climbers. It helps users record their climbing sessions, upload media, write movement notes, and track progress over time in an organized, intuitive format.
+ClimbTrack is a web-based training log tool for indoor climbers. It helps users record their climbing sessions, upload media, write movement notes, detect crowd and track progress over time in an organized, intuitive format.
 
 ## Target Users
 
