@@ -22,11 +22,36 @@ Users want to:
 - Upload and store media files (photos and videos)
 - Detect the number of people in the climbing gym (number and activities)
 
+## Project Progress
+
+- Set up Python 3.10 virtual environment  
+- Installed and configured **Streamlit**  
+- Created the **main homepage** 
+- Created a **profile page** 
+- Successfully ran the Streamlit interface
+
+## Project Structure
+
+```
+climbing_gym_app/
+│
+├── app.py        
+├── pages/
+│   └── profile.py     
+├── requirements.txt   
+└── README.md           
+```
+
+## Next Week's Plan
+
+- [ ] Build out remaining pages (e.g., **Climbing Routes**, **Leaderboard**, **Login/Register**)  
+- [ ] Implement navigation between pages  
+- [ ] Polish UI layout and component design  
 
 ## Timeline
 | Week | Tasks |
 |------|-------|
-| 1–2  | Develop basic UI for all core screens |
+| 1–2  | Setup environment and Develop basic page structure |
 | 3–4  | Implement personal profile and history screens |
 | 5–6  | Develop media upload/storage system |
 | 7    | Integrate media upload and backend storage |
@@ -34,6 +59,6 @@ Users want to:
 
 ## Contact Information
 
-**Project GitHub:** [https://github.com/FFFfff1FFFfff/TECHIN510](https://github.com/FFFfff1FFFfff/TECHIN510)  
+**Project GitHub:** [https://github.com/FFFfff1FFFfff/TECHIN510](https://github.com/FFFfff1FFFfff/ClimbTrack)  
 **Client Email:** yifanli8@uw.edu |
 **Developer Email:** zyx119@uw.edu
