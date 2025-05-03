@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log Climb Sessions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Saira Condensed', Arial, sans-serif; background: #F5F5F7; }
+        .upload-btn-wrapper { display: flex; justify-content: center; margin-bottom: 2.5rem; }
+        .big-plus-btn {
+            width: 90px; height: 90px; border-radius: 50%; background: #E84444; color: #fff;
+            font-size: 3.5rem; display: flex; align-items: center; justify-content: center;
+            border: none; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .big-plus-btn:hover { background: #c9302c; transform: scale(1.08); }
+        .timeline { max-width: 700px; margin: 0 auto; }
+        .timeline-day-group {
+            border: 2px dashed #E84444;
+            border-radius: 1.2rem;
+            margin-bottom: 2.5rem;
+            padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+            background: #fff;
+        }
+        .timeline-day-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #E84444;
+            margin-bottom: 1.2rem;
+            margin-left: 0.2rem;
+        }
+        .timeline-entry { background: none; border-radius: 1.2rem; box-shadow: none; margin-bottom: 1.5rem; padding: 0; display: flex; gap: 1.5rem; align-items: flex-start; }
+        .timeline-img { width: 180px; height: 180px; object-fit: cover; border-radius: 1rem; background: #eee; }
+        .timeline-content { flex: 1; }
+        .timeline-date { color: #888; font-size: 1rem; margin-bottom: 0.5rem; }
+        .timeline-grade { color: #E84444; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .timeline-note { color: #222; font-size: 1.1rem; }
+        .no-log { color: #aaa; text-align: center; margin-top: 3rem; font-size: 1.2rem; }
+        .back-btn { margin-bottom: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="container py-4 timeline">
+        <a href="/" class="btn btn-secondary back-btn">&larr; Back to Home</a>
+        <div class="upload-btn-wrapper">
+            <button class="big-plus-btn" data-bs-toggle="modal" data-bs-target="#uploadModal">+</button>
+        </div>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="alert alert-success">{{ messages[0] }}</div>
+          {% endif %}
+        {% endwith %}
+        {% if grouped_logs and grouped_logs|length > 0 %}
+            {% for day, logs in grouped_logs.items() %}
+                <div class="timeline-day-group">
+                    <div class="timeline-day-label">{{ day }}</div>
+                    {% for log in logs %}
+                    <div class="timeline-entry">
+                        {% if log.image %}
+                            <img src="/static/uploads/{{ log.image }}" class="timeline-img" alt="Climb photo">
+                        {% else %}
+                            <div class="timeline-img"></div>
+                        {% endif %}
+                        <div class="timeline-content">
+                            <div class="timeline-grade">{{ log.grade }}</div>
+                            <div class="timeline-note">{{ log.note }}</div>
+                            <div class="timeline-date">{{ log.date }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-log">No climb sessions yet. Start by uploading your first one!</div>
+        {% endif %}
+    </div>
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="uploadModalLabel">Upload New Climb Session</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" enctype="multipart/form-data">
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="image" class="form-label">Photo</label>
+                    <input class="form-control" type="file" id="image" name="image" accept="image/*" required>
+                </div>
+                <div class="mb-3">
+                    <label for="grade" class="form-label">Grade / Difficulty</label>
+                    <input class="form-control" type="text" id="grade" name="grade" placeholder="e.g. V4, 6b+, 5.11a" required>
+                </div>
+                <div class="mb-3">
+                    <label for="note" class="form-label">Notes</label>
+                    <textarea class="form-control" id="note" name="note" rows="2" placeholder="Beta, crux, style, etc."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input class="form-control" type="date" id="date" name="date" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-danger">Upload</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
