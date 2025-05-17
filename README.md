@@ -31,12 +31,12 @@ Users want to:
 - **Unit Tests**: Pytest-based tests for session log upload and grouping.
 
 ## Project Progress
-
-- Set up Python 3.10 virtual environment  
-- Installed and configured **Streamlit**  
-- Created the **main homepage** 
-- Created a **profile page** 
-- Successfully ran the Streamlit interface
+- **Session Log**: Record each climbing session with date, grade, notes, photo, type, and name.
+- **Rank Page**: View bouldering and sport climbing leaderboards, ranked by highest grade and completion time.
+- **Crowd Detection**: Visualize historical, current, and predicted gym crowd levels with interactive charts.
+- **Profile Page**: See your climbing stats, ability radar, wall preference pie chart, grade progression, 30-day activity heatmap, and manage your training notes.
+- **User System**: Login, sign up for a new account, and reset your password if forgotten.
+- **Unified Navigation**: All pages have a consistent, homepage-style navigation bar for easy access.
 
 ## Project Structure
 
@@ -51,10 +51,9 @@ climbing_gym_app/
 ```
 
 ## Next Week's Plan
-
-- [ ] Build out remaining pages (e.g., **Climbing Routes**, **Leaderboard**, **Login/Register**)  
-- [ ] Implement navigation between pages  
-- [ ] Polish UI layout and component design  
+- [ ] Database integration for persistent user and session storage
+- [ ] Email verification and password reset via email
+- [ ] More advanced analytics and visualizations
 
 ## Timeline
 | Week | Tasks |
@@ -65,11 +64,6 @@ climbing_gym_app/
 | 7    | Integrate media upload and backend storage |
 | 8-9  | Refine and implement crowd detection and activity monitory |
 
-## Contact Information
-
-**Project GitHub:** [https://github.com/FFFfff1FFFfff/TECHIN510](https://github.com/FFFfff1FFFfff/ClimbTrack)  
-**Client Email:** yifanli8@uw.edu |
-**Developer Email:** zyx119@uw.edu
 
 ## Quick Start
 
@@ -98,13 +92,8 @@ climbing_gym_app/
    pytest test_session_log.py
    ```
 
-## Notes
-- For demo, user info and logs are stored in memory. For production, use a database.
-- File uploads are saved to `static/uploads/`.
-- The UI and features can be further extended as needed.
+## Contact Information
 
-## Update Features (2024-06-09)
-- User login/logout (session-based, default user: testuser/password123)
-- Upload form supports custom date selection
-- Navigation bar shows login status and username
-- Unit tests for session log upload and grouping (pytest)
+**Project GitHub:** [https://github.com/FFFfff1FFFfff/TECHIN510](https://github.com/FFFfff1FFFfff/ClimbTrack)  
+**Client Email:** yifanli8@uw.edu |
+**Developer Email:** zyx119@uw.edu
