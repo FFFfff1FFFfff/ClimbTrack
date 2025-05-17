@@ -2,18 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login - ClimbTrack</title>
+    <title>Sign Up - ClimbTrack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Saira Condensed', Arial, sans-serif; background: #F5F5F7; }
-        .login-container { max-width: 400px; margin: 80px auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); padding: 2.5rem 2rem; }
-        .login-title { font-size: 2rem; font-weight: 700; color: #E84444; margin-bottom: 1.5rem; text-align: center; }
+        .signup-container { max-width: 400px; margin: 80px auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); padding: 2.5rem 2rem; }
+        .signup-title { font-size: 2rem; font-weight: 700; color: #2C3E50; margin-bottom: 1.5rem; text-align: center; }
     </style>
 </head>
 <body>
-<div class="login-container">
-    <div class="login-title">Login</div>
+<div class="signup-container">
+    <div class="signup-title">Sign Up</div>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <div class="alert alert-danger">{{ messages[0] }}</div>
@@ -28,11 +27,10 @@
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-danger w-100">Login</button>
+        <button type="submit" class="btn btn-primary w-100">Sign Up</button>
     </form>
-    <div class="mt-3 d-flex justify-content-between">
-        <a href="{{ url_for('signup') }}" class="link-secondary">Sign up</a>
-        <a href="{{ url_for('reset_password') }}" class="link-secondary">Forgot password?</a>
+    <div class="mt-3 text-center">
+        <a href="{{ url_for('login') }}" class="link-secondary">Already have an account? Login</a>
     </div>
 </div>
 </body>

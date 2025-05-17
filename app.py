@@ -106,6 +106,36 @@ def profile():
     username = session.get('user', 'Demo User')
     return render_template('profile.html', stats=stats, username=username)
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        if not username or not password:
+            flash('Username and password are required.')
+        elif username in users:
+            flash('Username already exists.')
+        else:
+            users[username] = password
+            flash('Account created! Please log in.')
+            return redirect(url_for('login'))
+    return render_template('signup.html')
+
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        new_password = request.form.get('new_password')
+        if not username or not new_password:
+            flash('Username and new password are required.')
+        elif username not in users:
+            flash('Username does not exist.')
+        else:
+            users[username] = new_password
+            flash('Password updated! Please log in.')
+            return redirect(url_for('login'))
+    return render_template('reset_password.html')
+
 def v_grade_key(grade):
     if not grade or not grade.startswith('V'):
         return -1
