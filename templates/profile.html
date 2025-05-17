@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - ClimbTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #F5F5F7; font-family: 'Saira Condensed', Arial, sans-serif; }
+        .profile-section { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); padding: 2.5rem 2rem; }
+        h2 { color: #2C3E50; font-weight: 700; margin-bottom: 2rem; }
+        .stats-table { width: 100%; margin-bottom: 2.5rem; }
+        .stats-table th, .stats-table td { padding: 0.7rem 1.2rem; font-size: 1.1rem; }
+        .stats-table th { background: #F5F5F7; color: #2C3E50; font-weight: 700; width: 40%; }
+        .stats-table td { background: #fff; color: #222; }
+        .back-btn { margin-bottom: 2rem; }
+        .navbar-custom { background: transparent; padding: 1.2rem 3rem 0.5rem 3rem; }
+        .navbar-custom .navbar-brand { color: #000; font-size: 2rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .navbar-custom .nav-link { color: #000; font-size: 1.1rem; font-weight: 700; margin-right: 1.5rem; text-transform: uppercase; }
+        .navbar-custom .btn-login { background: #E84444; color: #fff; border: none; border-radius: 2px; padding: 0.4rem 1.2rem; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">ClimbTrack</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    {% if session.get('user') %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">{{ session['user'] }}</a></li>
+                        <li class="nav-item"><a class="btn btn-login" href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="btn btn-login" href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container profile-section">
+        <h2>Profile: {{ username or 'Demo User' }}</h2>
+        <h4 class="mb-4">Summary Statistics</h4>
+        <table class="table stats-table">
+            <tbody>
+                <tr>
+                    <th>Bouldering Max Grade</th>
+                    <td>{{ stats.bouldering_max or 'V8' }}</td>
+                </tr>
+                <tr>
+                    <th>Sport Max Grade</th>
+                    <td>{{ stats.sport_max or '7b+' }}</td>
+                </tr>
+                <tr>
+                    <th>Sessions This Month</th>
+                    <td>{{ stats.sessions_this_month or 12 }}</td>
+                </tr>
+                <tr>
+                    <th>Bouldering Rank</th>
+                    <td>{{ stats.bouldering_rank or '3rd' }}</td>
+                </tr>
+                <tr>
+                    <th>Sport Rank</th>
+                    <td>{{ stats.sport_rank or '5th' }}</td>
+                </tr>
+                <tr>
+                    <th>Attendance Rank</th>
+                    <td>{{ stats.attendance_rank or '2nd' }}</td>
+                </tr>
+                <tr>
+                    <th>Total Sessions</th>
+                    <td>{{ stats.total_sessions or 86 }}</td>
+                </tr>
+                <tr>
+                    <th>Total Tops</th>
+                    <td>{{ stats.total_tops or 150 }}</td>
+                </tr>
+                <tr>
+                    <th>Shoe Size / Wall Preference</th>
+                    <td>{{ stats.shoe_size or '38' }} / {{ stats.wall_pref or 'Overhang' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="container profile-section mt-5">
+        <h4 class="mb-4">Stats Visualization</h4>
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="mb-3">Ability Radar</h5>
+                    <canvas id="radarChart" height="220"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="mb-3">Wall Preference</h5>
+                    <canvas id="pieChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="mb-3">Grade Progression</h5>
+                    <canvas id="lineChart" height="220"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-3 h-100">
+                    <h5 class="mb-3">Activity Heatmap (Last 30 Days)</h5>
+                    <div id="heatmap" style="display:grid;grid-template-columns:repeat(15,16px);gap:2px;"></div>
+                    <div class="mt-2" style="font-size:0.95rem;color:#888;">Each square = 1 day, darker = more activity</div>
+                </div>
+            </div>
+        </div>
+        <h4 class="mb-4">Training Log & Notes</h4>
+        <div class="card p-3 mb-4">
+            <form id="noteForm" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label for="noteDate" class="form-label mb-0">Date</label>
+                    <input type="date" class="form-control" id="noteDate" required>
+                </div>
+                <div class="col-md-7">
+                    <label for="noteContent" class="form-label mb-0">Note</label>
+                    <input type="text" class="form-control" id="noteContent" placeholder="Training content or feedback" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Add Note</button>
+                </div>
+            </form>
+        </div>
+        <div id="notesList">
+            <!-- Notes will be rendered here -->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    // Radar Chart (Ability)
+    const radarCtx = document.getElementById('radarChart').getContext('2d');
+    new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+            labels: ['Strength', 'Endurance', 'Technique', 'Speed', 'Flexibility', 'Mental'],
+            datasets: [{
+                label: 'Ability',
+                data: [7, 6, 8, 5, 6, 7],
+                backgroundColor: 'rgba(44,62,80,0.15)',
+                borderColor: '#2C3E50',
+                pointBackgroundColor: '#2C3E50',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: '#2C3E50',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { r: { min: 0, max: 10, ticks: { stepSize: 2 } } }
+        }
+    });
+
+    // Pie Chart (Wall Preference)
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Slab', 'Vertical', 'Overhang'],
+            datasets: [{
+                data: [12, 18, 30],
+                backgroundColor: ['#5DADE2', '#48C9B0', '#2C3E50'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // Line Chart (Grade Progression)
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: ['2024-04-01','2024-04-08','2024-04-15','2024-04-22','2024-05-01','2024-05-08','2024-05-15'],
+            datasets: [{
+                label: 'Max V Grade',
+                data: [3, 4, 5, 5, 6, 7, 7],
+                borderColor: '#2C3E50',
+                backgroundColor: 'rgba(44,62,80,0.10)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, stepSize: 1, title: { display: true, text: 'V Grade' } } }
+        }
+    });
+
+    // Activity Heatmap (Last 30 Days)
+    const heatmapData = [0,1,2,0,3,2,1,0,2,4,3,2,1,0,0,1,2,3,4,2,1,0,1,2,3,2,1,0,1,2];
+    const heatmap = document.getElementById('heatmap');
+    heatmap.innerHTML = '';
+    for (let i = 0; i < 30; i++) {
+        const val = heatmapData[i];
+        const color = val === 0 ? '#eee' : val === 1 ? '#BFD7ED' : val === 2 ? '#7FB3D5' : val === 3 ? '#2874A6' : '#154360';
+        const cell = document.createElement('div');
+        cell.style.width = '16px';
+        cell.style.height = '16px';
+        cell.style.background = color;
+        cell.title = `Day ${i+1}: ${val} activities`;
+        heatmap.appendChild(cell);
+    }
+
+    // Training Log & Notes (Mock, local only)
+    let notes = [
+        {date: '2024-05-20', content: 'Campus board session, focused on contact strength.'},
+        {date: '2024-05-18', content: 'Projecting V7, worked on heel hooks.'},
+        {date: '2024-05-15', content: 'Endurance circuits, 10 laps.'}
+    ];
+    function renderNotes() {
+        const list = document.getElementById('notesList');
+        if (!notes.length) {
+            list.innerHTML = '<div class="alert alert-info">No notes yet.</div>';
+            return;
+        }
+        list.innerHTML = notes.sort((a,b)=>b.date.localeCompare(a.date)).map((n,i) => `
+            <div class="card mb-2">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div><strong>${n.date}</strong>: ${n.content}</div>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${i})">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    function deleteNote(idx) {
+        notes.splice(idx,1); renderNotes();
+    }
+    document.getElementById('noteForm').onsubmit = function(e) {
+        e.preventDefault();
+        const date = document.getElementById('noteDate').value;
+        const content = document.getElementById('noteContent').value;
+        if(date && content) {
+            notes.push({date, content});
+            renderNotes();
+            this.reset();
+        }
+    };
+    renderNotes();
+    </script>
+</body>
+</html> 
