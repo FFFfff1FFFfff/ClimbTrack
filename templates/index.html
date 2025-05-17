@@ -176,7 +176,7 @@
                     <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                     {% if session.get('user') %}
-                        <li class="nav-item"><span class="nav-link">{{ session['user'] }}</span></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">{{ session['user'] }}</a></li>
                         <li class="nav-item"><a class="btn btn-login" href="{{ url_for('logout') }}">Logout</a></li>
                     {% else %}
                         <li class="nav-item"><a class="btn btn-login" href="{{ url_for('login') }}">Login</a></li>
@@ -199,7 +199,7 @@
                 <div class="feature-desc">Record every session's date, location, grade, and your feelings. Track your growth systematically.</div>
             </div>
         </a>
-        <a href="#" class="feature-card feature-link">
+        <a href="{{ url_for('rank') }}" class="feature-card feature-link">
             <div>
                 <div class="feature-title">Rank</div>
                 <div class="feature-desc">View your climbing rank and compare with others.</div>
