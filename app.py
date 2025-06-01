@@ -245,6 +245,17 @@ def api_get_user_climb_logs(user_id):
         'all_logs': all_logs
     }
 
+@app.route('/api/climb-logs/<int:log_id>', methods=['DELETE'])
+def api_delete_climb_log(log_id):
+    """删除攀登记录"""
+    if not session.get('user'):
+        return {'error': 'Not authenticated'}, 401
+    
+    user_id = session.get('user_id')
+    if ClimbingService.delete_climb_log(log_id, user_id):
+        return {'message': 'Climb log deleted successfully'}
+    return {'error': 'Failed to delete climb log'}, 400
+
 # API路由 - 统计数据
 @app.route('/api/statistics/update/<int:user_id>', methods=['POST'])
 def api_update_user_statistics(user_id):
@@ -355,6 +366,74 @@ def api_get_rankings():
     """获取排名数据"""
     rankings = ClimbingService.get_climbing_rankings()
     return rankings
+
+@app.route('/delete-session/<int:log_id>', methods=['POST'])
+def delete_session(log_id):
+    """Web form route to delete climb log"""
+    if not session.get('user'):
+        flash('Please login first.')
+        return redirect(url_for('login'))
+    
+    user_id = session.get('user_id')
+    if ClimbingService.delete_climb_log(log_id, user_id):
+        flash('Session deleted successfully!')
+    else:
+        flash('Failed to delete session.')
+    
+    return redirect(url_for('session_log'))
+
+@app.route('/edit-session/<int:log_id>', methods=['POST'])
+def edit_session(log_id):
+    """Web form route to edit climb log"""
+    if not session.get('user'):
+        flash('Please login first.')
+        return redirect(url_for('login'))
+    
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('User not found.')
+        return redirect(url_for('login'))
+    
+    # Get form data
+    name = request.form.get('name', '')
+    climb_type = request.form.get('type', '')
+    grade = request.form.get('grade', '')
+    note = request.form.get('note', '')
+    date_input = request.form.get('date')
+    
+    print(f"🔍 Edit session {log_id}: name={name}, type={climb_type}, grade={grade}, date={date_input}")  # Debug
+    
+    if not all([name, climb_type, grade]):
+        flash('Name, type, and grade are required.')
+        return redirect(url_for('session_log'))
+    
+    # Handle image upload
+    file = request.files.get('image')
+    new_image_filename = None
+    if file and file.filename and allowed_file(file.filename):
+        new_image_filename = datetime.now().strftime('%Y%m%d%H%M%S_') + secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], new_image_filename))
+        print(f"🖼️ New image uploaded: {new_image_filename}")  # Debug
+    
+    # Prepare climb data
+    climb_data = {
+        'name': name,
+        'type': climb_type,
+        'grade': grade,
+        'notes': note
+    }
+    
+    print(f"📝 Calling update_climb_log with: log_id={log_id}, user_id={user_id}, climb_data={climb_data}, new_image={new_image_filename}")  # Debug
+    
+    # Update the climb log
+    if ClimbingService.update_climb_log(log_id, user_id, climb_data, new_image_filename):
+        flash('Session updated successfully!')
+        print(f"✅ Session {log_id} updated successfully")  # Debug
+    else:
+        flash('Failed to update session.')
+        print(f"❌ Failed to update session {log_id}")  # Debug
+    
+    return redirect(url_for('session_log'))
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

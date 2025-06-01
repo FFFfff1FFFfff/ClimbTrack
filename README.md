@@ -1,99 +1,114 @@
 # ClimbTrack: Indoor Climbing Training Logger
-## Project Scope
 
-ClimbTrack is a web-based training log tool for indoor climbers. It helps users record their climbing sessions, upload media, write movement notes, detect crowd, and track progress over time in an organized, intuitive format.
+ClimbTrack is a comprehensive web-based training log tool for indoor climbers. Record your climbing sessions, track progress, analyze performance, and compete with the climbing community.
 
-## Target Users
+## 🎯 Key Features
 
-- Indoor climbers of all levels seeking structured training feedback  
-- Climbers preparing for competitions or training cycles  
+- **🔐 User Management**: Secure authentication and user profiles
+- **🧗 Session Logging**: Record climbs with grades, notes, and photos
+- **📊 Progress Tracking**: Automatic personal best detection and statistics
+- **🏆 Rankings**: Global leaderboards for bouldering and sport climbing
+- **🏢 Gym Management**: Track gym info and crowd levels
+- **🔌 RESTful API**: Complete CRUD operations for all data
 
-Users want to:
-- Log training sessions with details like route difficulty and location  
-- Upload and review videos/photos  
-- Note down beta, crux moves, or style observations  
-- Track personal goals and progress visually  
+## 🚀 Quick Start
 
-## Features
-
-### Core Features:
-- Log climb sessions (date, location, grade/difficulty)  
-- Add movement notes (beta, style, crux descriptions)  
-- Upload and store media files (photos and videos)
-- Detect the number of people in the climbing gym (number and activities)
-
-### Additional Features:
-- **User Login**: Simple username/password login (default: testuser / password123).
-- **Session Log**: Upload climbing session records with photo, grade, notes, and date. All records are grouped by day in a timeline (like social media moments).
-- **Crowd Detection**: (Stub page) For future crowd detection features.
-- **Rank**: (Stub page) For future ranking features.
-- **Modern UI**: Responsive, modern design with Bootstrap and custom styles.
-- **Unit Tests**: Pytest-based tests for session log upload and grouping.
-
-## Project Progress
-- **Session Log**: Record each climbing session with date, grade, notes, photo, type, and name.
-- **Rank Page**: View bouldering and sport climbing leaderboards, ranked by highest grade and completion time.
-- **Crowd Detection**: Visualize historical, current, and predicted gym crowd levels with interactive charts.
-- **Profile Page**: See your climbing stats, ability radar, wall preference pie chart, grade progression, 30-day activity heatmap, and manage your training notes.
-- **User System**: Login, sign up for a new account, and reset your password if forgotten.
-- **Unified Navigation**: All pages have a consistent, homepage-style navigation bar for easy access.
-
-## Project Structure
-
-```
-climbing_gym_app/
-│
-├── app.py        
-├── pages/
-│   └── profile.py     
-├── requirements.txt   
-└── README.md           
+### 1. Setup Database
+```bash
+python database/init_database.py
 ```
 
-## Next Week's Plan
-- [ ] Database integration for persistent user and session storage
-- [ ] Email verification and password reset via email
-- [ ] More advanced analytics and visualizations
+### 2. Install & Run
+```bash
+pip install -r requirements.txt
+python app.py
+```
+Visit [http://localhost:5000](http://localhost:5000)
 
-## Timeline
-| Week | Tasks |
-|------|-------|
-| 1–2  | Setup environment and Develop basic page structure |
-| 3–4  | Implement personal profile and history screens |
-| 5–6  | Develop media upload/storage system |
-| 7    | Integrate media upload and backend storage |
-| 8-9  | Refine and implement crowd detection and activity monitory |
+### 3. Login with Test Accounts
+- **Alice**: `alice` / `password123`
+- **Bob**: `bob` / `climbhard`  
+- **Charlie**: `charlie` / `bouldering`
 
+## 📁 Project Structure
 
-## Quick Start
+```
+ClimbTrack/
+├── app.py                    # Main Flask application
+├── database/                 # Database layer
+│   ├── models.py            # Data models
+│   ├── dao.py               # Data access objects
+│   ├── services.py          # Business logic
+│   └── init_database.py     # Database setup
+├── templates/               # HTML templates
+├── static/                  # CSS, JS, uploads
+└── API_DOCUMENTATION.md     # Complete API docs
+```
 
-1. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+## 💻 API Examples
 
-2. **Run the app**
-   ```bash
-   python app.py
-   ```
-   Visit [http://localhost:5000](http://localhost:5000)
+### Service Layer
+```python
+from database.services import AuthService, ClimbingService
 
-3. **Login**
-   - Username: `testuser`
-   - Password: `password123`
+# Authenticate user
+user = AuthService.authenticate_user("alice", "password123")
 
-4. **Session Log**
-   - Click "Session Log" on the homepage.
-   - Click the big "+" button to upload a new session (photo, grade, notes, date).
-   - All sessions are grouped by day in a timeline.
+# Create climb log
+climb_data = {"name": "Crimson Tide", "type": "bouldering", "grade": "V4"}
+ClimbingService.create_climb_log(user['id'], "2024-01-15", climb_data)
+```
 
-5. **Run Tests**
-   ```bash
-   pytest test_session_log.py
-   ```
+### REST API
+```bash
+# Get rankings
+GET /api/rankings
 
-## Contact Information
+# Create climb log
+POST /api/climb-logs
+{"name": "Blue Moon", "type": "bouldering", "grade": "V5", "session_date": "2024-01-15"}
+```
 
-**Project GitHub:** [https://github.com/FFFfff1FFFfff/TECHIN510](https://github.com/FFFfff1FFFfff/ClimbTrack)  
-**Client Email:** yifanli8@uw.edu |
-**Developer Email:** zyx119@uw.edu
+## 🧪 Testing
+
+```bash
+pytest test/test_session_log.py -v
+```
+
+## 📚 Documentation
+
+- **[API Documentation](API_DOCUMENTATION.md)**: Complete API reference
+- **[Setup Guide](SETUP_GUIDE.md)**: Detailed setup instructions
+- **[Database Docs](database/DATABASE_README.md)**: Database schema and design
+
+## 🛠️ Technology Stack
+
+- **Backend**: Python Flask, SQLite
+- **Frontend**: HTML5, CSS3, Bootstrap
+- **Architecture**: Three-tier with DAO pattern
+- **API**: RESTful JSON with session auth
+
+## 📈 Database Management
+
+```bash
+# Update statistics
+python database/update_statistics.py
+
+# Backup database
+cp database/climbtrack.db database/backup_$(date +%Y%m%d).db
+```
+
+## 🎯 Current Status
+
+✅ **Complete**: Database architecture, user auth, climbing logs, rankings, API  
+🚧 **Future**: Mobile app, social features, advanced analytics
+
+## 📞 Contact
+
+**Repository**: [ClimbTrack GitHub](https://github.com/FFFfff1FFFfff/ClimbTrack)  
+**Developer**: zyx119@uw.edu  
+**Client**: yifanli8@uw.edu
+
+---
+
+**Ready to start climbing? Initialize the database and start logging! 🧗‍♀️🧗‍♂️**
