@@ -223,12 +223,12 @@ class ClimbLogDAO(BaseDAO):
         query = '''
             UPDATE climb_logs 
             SET climb_name = ?, climb_type = ?, grade = ?, attempt_result = ?, 
-                attempts_count = ?, image_filename = ?, notes = ?, updated_at = ?
+                attempts_count = ?, image_filename = ?, notes = ?
             WHERE id = ?
         '''
         return self.db.execute_update(query, (
             log.climb_name, log.climb_type, log.grade, log.attempt_result,
-            log.attempts_count, log.image_filename, log.notes, datetime.now(), id
+            log.attempts_count, log.image_filename, log.notes, id
         ))
     
     def get_by_user_id(self, user_id: int) -> List[Dict[str, Any]]:

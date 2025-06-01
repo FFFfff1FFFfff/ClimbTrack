@@ -8,6 +8,7 @@ import hashlib
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, date
 from collections import defaultdict
+import os
 
 from .dao import *
 from .models import *
@@ -233,7 +234,9 @@ class ClimbingService:
         for log in logs:
             # 转换为与模板兼容的格式
             log_dict = {
+                'id': log['id'],  # Add ID for delete functionality
                 'date': log['timestamp'],
+                'session_date': log['session_date'],  # Add session_date for edit functionality
                 'image': log['image_filename'],
                 'grade': log['grade'],
                 'note': log['notes'],
@@ -245,6 +248,97 @@ class ClimbingService:
             formatted_logs.append(log_dict)
         
         return dict(grouped_logs), formatted_logs
+    
+    @staticmethod
+    def delete_climb_log(log_id: int, user_id: int) -> bool:
+        """删除攀登记录"""
+        try:
+            # First verify that this log belongs to the user
+            log = climb_log_dao.get_by_id(log_id)
+            if not log or log['user_id'] != user_id:
+                return False
+            
+            # Delete the associated image file if it exists
+            if log['image_filename']:
+                image_path = os.path.join('static/uploads', log['image_filename'])
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+            
+            # Delete the climb log
+            result = climb_log_dao.delete_by_id(log_id)
+            
+            # Update user statistics
+            if result > 0:
+                StatisticsService.update_user_statistics(user_id)
+                return True
+            return False
+        except Exception as e:
+            print(f"删除攀登记录失败: {e}")
+            return False
+    
+    @staticmethod
+    def update_climb_log(log_id: int, user_id: int, climb_data: Dict[str, Any], new_image_filename: Optional[str] = None) -> bool:
+        """更新攀登记录"""
+        try:
+            print(f"🔍 update_climb_log called: log_id={log_id}, user_id={user_id}")  # Debug
+            
+            # First verify that this log belongs to the user
+            existing_log = climb_log_dao.get_by_id(log_id)
+            if not existing_log:
+                print(f"❌ Log {log_id} not found")  # Debug
+                return False
+            if existing_log['user_id'] != user_id:
+                print(f"❌ Log {log_id} does not belong to user {user_id}, belongs to {existing_log['user_id']}")  # Debug
+                return False
+            
+            print(f"✅ Found existing log: {existing_log}")  # Debug
+            
+            # Handle image file update
+            image_filename = existing_log['image_filename']
+            if new_image_filename:
+                print(f"🖼️ Updating image from {image_filename} to {new_image_filename}")  # Debug
+                # Delete old image if it exists
+                if existing_log['image_filename']:
+                    old_image_path = os.path.join('static/uploads', existing_log['image_filename'])
+                    if os.path.exists(old_image_path):
+                        os.remove(old_image_path)
+                        print(f"🗑️ Deleted old image: {old_image_path}")  # Debug
+                image_filename = new_image_filename
+            
+            # Update the climb log
+            updated_log = ClimbLog(
+                id=log_id,
+                session_id=existing_log['session_id'],
+                user_id=user_id,
+                climb_name=climb_data['name'],
+                climb_type=climb_data['type'],
+                grade=climb_data['grade'],
+                attempt_result=climb_data.get('attempt_result', existing_log['attempt_result']),
+                attempts_count=climb_data.get('attempts_count', existing_log['attempts_count']),
+                image_filename=image_filename,
+                notes=climb_data.get('notes', ''),
+                timestamp=existing_log['timestamp']  # Keep original timestamp
+            )
+            
+            print(f"📝 Calling DAO update with: {updated_log.__dict__}")  # Debug
+            
+            result = climb_log_dao.update(log_id, updated_log)
+            print(f"🔄 DAO update result: {result}")  # Debug
+            
+            # Update personal best if grade improved
+            ClimbingService.update_personal_best(user_id, climb_data['type'], climb_data['grade'], log_id)
+            
+            # Update user statistics
+            if result > 0:
+                StatisticsService.update_user_statistics(user_id)
+                print(f"✅ Successfully updated log {log_id}")  # Debug
+                return True
+            else:
+                print(f"❌ DAO update returned {result} for log {log_id}")  # Debug
+                return False
+        except Exception as e:
+            print(f"💥 Exception in update_climb_log: {e}")  # Debug
+            return False
     
     @staticmethod
     def get_climbing_rankings() -> Dict[str, List[Dict]]:
