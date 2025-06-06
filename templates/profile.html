@@ -2,21 +2,135 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile - ClimbTrack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo User's Profile - ClimbTrack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background: #F5F5F7; font-family: 'Saira Condensed', Arial, sans-serif; }
-        .profile-section { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 1.2rem; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); padding: 2.5rem 2rem; }
-        h2 { color: #2C3E50; font-weight: 700; margin-bottom: 2rem; }
-        .stats-table { width: 100%; margin-bottom: 2.5rem; }
-        .stats-table th, .stats-table td { padding: 0.7rem 1.2rem; font-size: 1.1rem; }
-        .stats-table th { background: #F5F5F7; color: #2C3E50; font-weight: 700; width: 40%; }
-        .stats-table td { background: #fff; color: #222; }
-        .back-btn { margin-bottom: 2rem; }
-        .navbar-custom { background: transparent; padding: 1.2rem 3rem 0.5rem 3rem; }
-        .navbar-custom .navbar-brand { color: #000; font-size: 2rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        .navbar-custom .nav-link { color: #000; font-size: 1.1rem; font-weight: 700; margin-right: 1.5rem; text-transform: uppercase; }
-        .navbar-custom .btn-login { background: #E84444; color: #fff; border: none; border-radius: 2px; padding: 0.4rem 1.2rem; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; }
+        /* Profile页面特定样式 */
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            flex-shrink: 0;
+        }
+
+        .profile-text {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2.7rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .profile-subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+        
+        .stats-table {
+            background: #fff;
+            font-size: 1.2rem;
+        }
+
+        .stats-table th {
+            background: #f8f9fa;
+            color: #000;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 40%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .stats-table td {
+            background: #fff;
+            color: #444;
+            padding: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .card-custom h5 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .highlight-text {
+            font-size: 1.6rem;
+        }
+
+        .form-label {
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            font-size: 1.1rem;
+        }
+
+        .card-custom {
+            font-size: 1.1rem;
+        }
+
+        .text-muted-custom {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-container {
+                padding: 1rem;
+            }
+            
+            .profile-header {
+                padding: 2rem 1rem;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .profile-name {
+                font-size: 2.2rem;
+            }
+            
+            .profile-subtitle {
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -37,101 +151,127 @@
             </div>
         </div>
     </nav>
-    <div class="container profile-section">
-        <h2>Profile: {{ username or 'Demo User' }}</h2>
-        <h4 class="mb-4">Summary Statistics</h4>
-        <table class="table stats-table">
-            <tbody>
-                <tr>
-                    <th>Bouldering Max Grade</th>
-                    <td>{{ stats.bouldering_max or 'V8' }}</td>
-                </tr>
-                <tr>
-                    <th>Sport Max Grade</th>
-                    <td>{{ stats.sport_max or '7b+' }}</td>
-                </tr>
-                <tr>
-                    <th>Sessions This Month</th>
-                    <td>{{ stats.sessions_this_month or 12 }}</td>
-                </tr>
-                <tr>
-                    <th>Bouldering Rank</th>
-                    <td>{{ stats.bouldering_rank or '3rd' }}</td>
-                </tr>
-                <tr>
-                    <th>Sport Rank</th>
-                    <td>{{ stats.sport_rank or '5th' }}</td>
-                </tr>
-                <tr>
-                    <th>Attendance Rank</th>
-                    <td>{{ stats.attendance_rank or '2nd' }}</td>
-                </tr>
-                <tr>
-                    <th>Total Sessions</th>
-                    <td>{{ stats.total_sessions or 86 }}</td>
-                </tr>
-                <tr>
-                    <th>Total Tops</th>
-                    <td>{{ stats.total_tops or 150 }}</td>
-                </tr>
-                <tr>
-                    <th>Shoe Size / Wall Preference</th>
-                    <td>{{ stats.shoe_size or '38' }} / {{ stats.wall_pref or 'Overhang' }}</td>
-                </tr>
-            </tbody>
-        </table>
+
+    <div class="profile-container fade-in">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <img src="{{ url_for('static', filename='images/protfolio_image.jpg') }}" 
+                     alt="Profile Picture" class="profile-avatar">
+                <div class="profile-text">
+                    <h1 class="profile-name">{{username}}'s Profile</h1>
+                    <p class="profile-subtitle">Climbing enthusiast since 2023</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section fade-in">
+            <h4 class="mb-4 highlight-text">SUMMARY STATISTICS</h4>
+            <div class="table-custom">
+                <table class="table stats-table mb-0">
+                    <tbody>
+                        <tr>
+                            <th>Bouldering Max Grade</th>
+                            <td>{{ stats.bouldering_max or 'V8' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sport Max Grade</th>
+                            <td>{{ stats.sport_max or '7b+' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sessions This Month</th>
+                            <td>{{ stats.sessions_this_month or 12 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Bouldering Rank</th>
+                            <td>{{ stats.bouldering_rank or '3rd' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Sport Rank</th>
+                            <td>{{ stats.sport_rank or '5th' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Attendance Rank</th>
+                            <td>{{ stats.attendance_rank or '2nd' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Sessions</th>
+                            <td>{{ stats.total_sessions or 86 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Tops</th>
+                            <td>{{ stats.total_tops or 150 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Shoe Size / Wall Preference</th>
+                            <td>{{ stats.shoe_size or '38' }} / {{ stats.wall_pref or 'Bouldering' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="content-section fade-in">
+            <h4 class="mb-4 highlight-text">STATS VISUALIZATION</h4>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card-custom h-100">
+                        <h5 class="mb-3">Ability Radar</h5>
+                        <canvas id="radarChart" height="220"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card-custom h-100">
+                        <h5 class="mb-3">Wall Preference</h5>
+                        <canvas id="pieChart" height="220"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6 mb-4">
+                    <div class="card-custom h-100">
+                        <h5 class="mb-3">Grade Progression</h5>
+                        <canvas id="lineChart" height="220"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card-custom h-100">
+                        <h5 class="mb-3">Activity Heatmap (Last 30 Days)</h5>
+                        <div id="heatmap" style="display:grid;grid-template-columns:repeat(15,16px);gap:2px;"></div>
+                        <div class="mt-2 text-muted-custom" style="font-size:1.1rem;">Each square = 1 day, darker = more activity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section fade-in">
+            <h4 class="mb-4 highlight-text">TRAINING LOG & NOTES</h4>
+            <div class="card-custom p-3 mb-4">
+                <form id="noteForm" class="row g-2 align-items-end form-custom">
+                    <div class="col-md-3">
+                        <label for="noteDate" class="form-label mb-0">Date</label>
+                        <input type="date" class="form-control" id="noteDate" required>
+                    </div>
+                    <div class="col-md-7">
+                        <label for="noteContent" class="form-label mb-0">Note</label>
+                        <input type="text" class="form-control" id="noteContent" placeholder="Training content or feedback" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary-custom w-100">Add Note</button>
+                    </div>
+                </form>
+            </div>
+            <div id="notesList">
+                <!-- Notes will be rendered here -->
+            </div>
+        </div>
     </div>
-    <div class="container profile-section mt-5">
-        <h4 class="mb-4">Stats Visualization</h4>
-        <div class="row mb-4">
-            <div class="col-md-6 mb-4">
-                <div class="card p-3 h-100">
-                    <h5 class="mb-3">Ability Radar</h5>
-                    <canvas id="radarChart" height="220"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card p-3 h-100">
-                    <h5 class="mb-3">Wall Preference</h5>
-                    <canvas id="pieChart" height="220"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-md-6 mb-4">
-                <div class="card p-3 h-100">
-                    <h5 class="mb-3">Grade Progression</h5>
-                    <canvas id="lineChart" height="220"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card p-3 h-100">
-                    <h5 class="mb-3">Activity Heatmap (Last 30 Days)</h5>
-                    <div id="heatmap" style="display:grid;grid-template-columns:repeat(15,16px);gap:2px;"></div>
-                    <div class="mt-2" style="font-size:0.95rem;color:#888;">Each square = 1 day, darker = more activity</div>
-                </div>
-            </div>
-        </div>
-        <h4 class="mb-4">Training Log & Notes</h4>
-        <div class="card p-3 mb-4">
-            <form id="noteForm" class="row g-2 align-items-end">
-                <div class="col-md-3">
-                    <label for="noteDate" class="form-label mb-0">Date</label>
-                    <input type="date" class="form-control" id="noteDate" required>
-                </div>
-                <div class="col-md-7">
-                    <label for="noteContent" class="form-label mb-0">Note</label>
-                    <input type="text" class="form-control" id="noteContent" placeholder="Training content or feedback" required>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Add Note</button>
-                </div>
-            </form>
-        </div>
-        <div id="notesList">
-            <!-- Notes will be rendered here -->
-        </div>
-    </div>
+
+    <footer class="footer">
+        &copy; 2024 ClimbTrack. All rights reserved.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
     // Radar Chart (Ability)
@@ -143,12 +283,12 @@
             datasets: [{
                 label: 'Ability',
                 data: [7, 6, 8, 5, 6, 7],
-                backgroundColor: 'rgba(44,62,80,0.15)',
-                borderColor: '#2C3E50',
-                pointBackgroundColor: '#2C3E50',
+                backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                pointBackgroundColor: 'rgba(102, 126, 234, 1)',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: '#2C3E50',
+                pointHoverBorderColor: 'rgba(102, 126, 234, 1)',
                 borderWidth: 2
             }]
         },
@@ -163,10 +303,10 @@
     new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Slab', 'Vertical', 'Overhang'],
+            labels: ['Bouldering', 'Sport Climbing'],
             datasets: [{
-                data: [12, 18, 30],
-                backgroundColor: ['#5DADE2', '#48C9B0', '#2C3E50'],
+                data: [35, 25],
+                backgroundColor: ['rgba(102, 126, 234, 1)', '#48C9B0'],
                 borderWidth: 1
             }]
         },
@@ -184,8 +324,8 @@
             datasets: [{
                 label: 'Max V Grade',
                 data: [3, 4, 5, 5, 6, 7, 7],
-                borderColor: '#2C3E50',
-                backgroundColor: 'rgba(44,62,80,0.10)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                backgroundColor: 'rgba(102, 126, 234, 0.10)',
                 fill: true,
                 tension: 0.3,
                 pointRadius: 4
@@ -221,13 +361,13 @@
     function renderNotes() {
         const list = document.getElementById('notesList');
         if (!notes.length) {
-            list.innerHTML = '<div class="alert alert-info">No notes yet.</div>';
+            list.innerHTML = '<div class="card-custom"><div class="text-muted-custom">No notes yet.</div></div>';
             return;
         }
         list.innerHTML = notes.sort((a,b)=>b.date.localeCompare(a.date)).map((n,i) => `
-            <div class="card mb-2">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div><strong>${n.date}</strong>: ${n.content}</div>
+            <div class="card-custom mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><strong class="highlight-text">${n.date}</strong>: ${n.content}</div>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteNote(${i})">Delete</button>
                 </div>
             </div>

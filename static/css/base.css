@@ -1,0 +1,263 @@
+/* ClimbTrack 统一基础样式 */
+
+/* 字体引入 */
+@import url('https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap');
+
+/* 基础样式 */
+body {
+    background: #E8E7E8;
+    font-family: 'Saira Condensed', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #222;
+    line-height: 1.6;
+}
+
+/* 导航栏样式 */
+.navbar-custom {
+    background: transparent;
+    padding: 1.2rem 3rem 0.5rem 3rem;
+}
+
+.navbar-custom .navbar-brand {
+    color: #000;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.navbar-custom .nav-link {
+    color: #000;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-right: 1.5rem;
+    text-transform: uppercase;
+}
+
+.navbar-custom .btn-login {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    padding: 0.4rem 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .btn-login:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+}
+
+/* 页面容器样式 */
+.page-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.content-section {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10);
+    padding: 2.5rem 2rem;
+    margin-bottom: 2rem;
+}
+
+/* 页面标题样式 */
+.page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    line-height: 1.1;
+    letter-spacing: 2px;
+    margin-bottom: 2rem;
+}
+
+.page-title .highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-subtitle {
+    font-size: 1.3rem;
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+/* 卡片样式 */
+.card-custom {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    transition: box-shadow 0.18s, transform 0.18s;
+}
+
+.card-custom:hover {
+    box-shadow: 0 12px 32px 0 rgba(31,38,135,0.18);
+    transform: translateY(-2px);
+}
+
+/* 按钮样式 */
+.btn-primary-custom {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2px;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.08rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+}
+
+/* 表格样式 */
+.table-custom {
+    background: #fff;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10);
+}
+
+.table-custom thead th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 1rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.table-custom tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #444;
+}
+
+.table-custom tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* 表单样式 */
+.form-custom .form-label {
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.form-custom .form-control,
+.form-custom .form-select {
+    border: 2px solid #e1e5e9;
+    border-radius: 4px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-custom .form-control:focus,
+.form-custom .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* 页面底部样式 */
+.footer {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    text-align: center;
+    padding: 2rem 0 1rem 0;
+    margin-top: 80px;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .page-container {
+        padding: 1rem;
+    }
+    
+    .navbar-custom {
+        padding: 1rem 2rem 0.5rem 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .navbar-custom {
+        padding: 1rem;
+    }
+    
+    .content-section {
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* 特殊元素样式 */
+.highlight-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.text-muted-custom {
+    color: #666;
+}
+
+.border-custom {
+    border: 2px solid #e1e5e9;
+    border-radius: 4px;
+}
+
+/* 动画效果 */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.scale-hover {
+    transition: transform 0.3s ease;
+}
+
+.scale-hover:hover {
+    transform: scale(1.05);
+}
+
+/* 紫色主题特定样式 */
+.purple-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.purple-gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+} 

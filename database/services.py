@@ -259,7 +259,17 @@ class ClimbingService:
             grouped_logs[log_day].append(log_dict)
             formatted_logs.append(log_dict)
         
-        return dict(grouped_logs), formatted_logs
+        # Sort each day's logs by timestamp (newest first within each day)
+        for day in grouped_logs:
+            grouped_logs[day].sort(key=lambda x: x['date'], reverse=True)
+        
+        # Convert to OrderedDict sorted by date (newest first)
+        from collections import OrderedDict
+        sorted_grouped_logs = OrderedDict(
+            sorted(grouped_logs.items(), key=lambda x: x[0], reverse=True)
+        )
+        
+        return dict(sorted_grouped_logs), formatted_logs
     
     @staticmethod
     def delete_climb_log(log_id: int, user_id: int) -> bool:

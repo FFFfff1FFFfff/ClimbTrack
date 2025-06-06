@@ -10,37 +10,61 @@
     <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Saira Condensed', Arial, sans-serif; background: #F5F5F7; }
+        
+        /* Page title styles */
+        .page-title {
+            color: #000;
+            font-size: 3rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            margin: 2rem 0 1rem 0;
+        }
+        
         .upload-btn-wrapper { display: flex; justify-content: center; margin-bottom: 2.5rem; }
         .big-plus-btn {
-            width: 90px; height: 90px; border-radius: 50%; background: #E84444; color: #fff;
-            font-size: 3.5rem; display: flex; align-items: center; justify-content: center;
+            width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;
+            font-size: 4.5rem; display: flex; align-items: center; justify-content: center;
             border: none; box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10); cursor: pointer;
             transition: background 0.2s, transform 0.15s;
         }
-        .big-plus-btn:hover { background: #c9302c; transform: scale(1.08); }
-        .timeline { max-width: 700px; margin: 0 auto; }
+        .big-plus-btn:hover { background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%); transform: scale(1.08); }
+        .timeline { max-width: 1200px; margin: 0 auto; }
         .timeline-day-group {
-            border: 2px dashed #E84444;
+            border: 2px dashed transparent;
+            border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
             border-radius: 1.2rem;
             margin-bottom: 2.5rem;
-            padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+            padding: 2.5rem;
             background: #fff;
+            box-shadow: 0 4px 24px 0 rgba(31,38,135,0.10);
         }
         .timeline-day-label {
-            font-size: 1.2rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            color: #E84444;
-            margin-bottom: 1.2rem;
-            margin-left: 0.2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        .timeline-entry { background: none; border-radius: 1.2rem; box-shadow: none; margin-bottom: 1.5rem; padding: 0; display: flex; gap: 1.5rem; align-items: flex-start; }
-        .timeline-img { width: 180px; height: 180px; object-fit: cover; border-radius: 1rem; background: #eee; }
+        .timeline-entry { background: none; border-radius: 1.2rem; box-shadow: none; margin-bottom: 2.5rem; padding: 0; display: flex; gap: 2.5rem; align-items: flex-start; }
+        .timeline-img { width: 250px; height: 250px; object-fit: cover; border-radius: 1rem; background: #eee; }
         .timeline-content { flex: 1; }
-        .timeline-date { color: #888; font-size: 1rem; margin-bottom: 0.5rem; }
-        .timeline-grade { color: #E84444; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .timeline-type { color: #666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.3rem; }
-        .timeline-route-info { color: #888; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.3rem; }
-        .timeline-note { color: #222; font-size: 1.1rem; }
+        .timeline-date { color: #888; font-size: 1.4rem; margin-bottom: 0.5rem; }
+        .timeline-grade { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700; font-size: 1.6rem; margin-bottom: 0.5rem; 
+        }
+        .timeline-type { color: #666; font-size: 1.3rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.3rem; }
+        .timeline-route-info { color: #888; font-size: 1.2rem; font-weight: 500; margin-bottom: 0.3rem; }
+        .timeline-note { color: #222; font-size: 1.5rem; }
         .no-log { color: #aaa; text-align: center; margin-top: 3rem; font-size: 1.2rem; }
         .back-btn { margin-bottom: 2rem; }
         .navbar-custom { background: transparent; padding: 1.2rem 3rem 0.5rem 3rem; }
@@ -54,9 +78,9 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            font-size: 1.6rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -75,9 +99,9 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 1rem;
+            width: 40px;
+            height: 40px;
+            font-size: 1.4rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -110,8 +134,8 @@
             color: white;
             border: none;
             border-radius: 25px;
-            padding: 0.5rem 1.5rem;
-            font-size: 1rem;
+            padding: 0.7rem 2rem;
+            font-size: 1.2rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
@@ -352,6 +376,11 @@
             </div>
         </div>
     </nav>
+    
+    <div class="container">
+        <h1 class="page-title">Session Log</h1>
+    </div>
+    
     <div class="container py-4 timeline">
         <div class="upload-btn-wrapper">
             <button class="big-plus-btn" data-bs-toggle="modal" data-bs-target="#uploadModal">+</button>
@@ -382,7 +411,7 @@
                             <div class="timeline-route-info">{{ log.route_type }} - {{ log.route_difficulty }}</div>
                             {% endif %}
                             <div class="timeline-note">{{ log.note }}</div>
-                            <div class="timeline-date">{{ log.date }}</div>
+                            <div class="timeline-date">{{ log.session_date }}</div>
                         </div>
                         <div class="timeline-actions">
                             <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" 
@@ -412,10 +441,9 @@
           </div>
           <form method="post" enctype="multipart/form-data" lang="en">
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Climber Name</label>
-                    <input class="form-control" type="text" id="name" name="name" placeholder="Enter climber name" required lang="en">
-                </div>
+                <!-- Hidden climber name field - auto-filled with current user -->
+                <input type="hidden" id="name" name="name" value="{{ session.get('user', 'Demo User') }}" required>
+                
                 <div class="mb-3">
                     <label for="route_id" class="form-label">Route</label>
                     <select class="form-control" id="route_id" name="route_id" required lang="en">
@@ -479,10 +507,9 @@
           </div>
           <form id="editForm" method="post" enctype="multipart/form-data" lang="en">
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="editName" class="form-label">Climber Name</label>
-                    <input class="form-control" type="text" id="editName" name="name" placeholder="Enter climber name" required lang="en">
-                </div>
+                <!-- Hidden climber name field - auto-filled with current user -->
+                <input type="hidden" id="editName" name="name" value="{{ session.get('user', 'Demo User') }}" required>
+                
                 <div class="mb-3">
                     <label for="editRoute" class="form-label">Route</label>
                     <select class="form-control" id="editRoute" name="route_id" required lang="en">
@@ -631,7 +658,7 @@
                     console.log('Edit clicked:', { logId, name, routeId, note, date, image }); // Debug log
                     
                     // Populate the edit form
-                    document.getElementById('editName').value = name || '';
+                    document.getElementById('editName').value = '{{ session.get("user", "Demo User") }}';
                     document.getElementById('editRoute').value = routeId || '';
                     document.getElementById('editNote').value = note || '';
                     
@@ -646,18 +673,29 @@
                     // Set the date in the edit date picker
                     if (date && date !== 'None') {
                         console.log('Setting date:', date); // Debug log
-                        // Parse YYYY-MM-DD format
-                        const dateParts = date.split('-');
-                        if (dateParts.length === 3) {
-                            const year = parseInt(dateParts[0]);
-                            const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
-                            const day = parseInt(dateParts[2]);
-                            const editDate = new Date(year, month, day);
-                            
+                        // Parse YYYY-MM-DD format or handle potential null/undefined values
+                        let editDate;
+                        if (typeof date === 'string' && date.includes('-')) {
+                            const dateParts = date.split('-');
+                            if (dateParts.length === 3) {
+                                const year = parseInt(dateParts[0]);
+                                const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
+                                const day = parseInt(dateParts[2]);
+                                editDate = new Date(year, month, day);
+                            }
+                        }
+                        
+                        if (editDate && !isNaN(editDate.getTime())) {
                             console.log('Parsed date:', editDate); // Debug log
-                            
                             editDatePicker.selectedDate = editDate;
                             editDatePicker.currentDate = new Date(editDate);
+                            editDatePicker.updateInput();
+                            editDatePicker.render();
+                        } else {
+                            console.log('Invalid date, setting to today'); // Debug log
+                            const today = new Date();
+                            editDatePicker.selectedDate = today;
+                            editDatePicker.currentDate = new Date(today);
                             editDatePicker.updateInput();
                             editDatePicker.render();
                         }
@@ -753,10 +791,10 @@
                 },
                 
                 formatDate: function(date) {
+                    const year = date.getFullYear();
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     const day = date.getDate().toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${month}/${day}/${year}`;
+                    return `${year}-${month}-${day}`;
                 },
                 
                 render: function() {
@@ -895,10 +933,10 @@
                 },
                 
                 formatDate: function(date) {
+                    const year = date.getFullYear();
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     const day = date.getDate().toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${month}/${day}/${year}`;
+                    return `${year}-${month}-${day}`;
                 },
                 
                 render: function() {
