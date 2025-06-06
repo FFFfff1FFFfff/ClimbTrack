@@ -8,10 +8,17 @@
     <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
     <style>
         body {
+            min-height: 100vh;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            flex: 1;
             padding: 2rem;
         }
         
@@ -59,33 +66,41 @@
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="content-section fade-in">
-            <div class="login-title">CLIMB<span class="highlight">TRACK</span></div>
-            <h4 class="text-center mb-4 text-muted-custom">Welcome Back</h4>
-            
-            {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <div class="alert alert-danger">{{ messages[0] }}</div>
-              {% endif %}
-            {% endwith %}
-            
-            <form method="post" class="form-custom">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required autofocus>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">ClimbTrack</a>
+        </div>
+    </nav>
+    
+    <div class="main-content">
+        <div class="login-container">
+            <div class="content-section fade-in">
+                <div class="login-title">CLIMB<span class="highlight">TRACK</span></div>
+                <h4 class="text-center mb-4 text-muted-custom">Welcome Back</h4>
+                
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <div class="alert alert-danger">{{ messages[0] }}</div>
+                  {% endif %}
+                {% endwith %}
+                
+                <form method="post" class="form-custom">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary-custom w-100">Login</button>
+                </form>
+                
+                <div class="auth-links">
+                    <a href="{{ url_for('signup') }}">Sign up</a>
+                    <span class="text-muted-custom">•</span>
+                    <a href="{{ url_for('reset_password') }}">Forgot password?</a>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary-custom w-100">Login</button>
-            </form>
-            
-            <div class="auth-links">
-                <a href="{{ url_for('signup') }}">Sign up</a>
-                <span class="text-muted-custom">•</span>
-                <a href="{{ url_for('reset_password') }}">Forgot password?</a>
             </div>
         </div>
     </div>

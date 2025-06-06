@@ -411,7 +411,7 @@
                             <div class="timeline-route-info">{{ log.route_type }} - {{ log.route_difficulty }}</div>
                             {% endif %}
                             <div class="timeline-note">{{ log.note }}</div>
-                            <div class="timeline-date">{{ log.date[:16] if log.date and log.date|length > 16 else (log.date if log.date else log.session_date) }}</div>
+                            <div class="timeline-date">{{ log.session_date }}</div>
                         </div>
                         <div class="timeline-actions">
                             <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" 
@@ -441,10 +441,9 @@
           </div>
           <form method="post" enctype="multipart/form-data" lang="en">
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Climber Name</label>
-                    <input class="form-control" type="text" id="name" name="name" placeholder="Enter climber name" required lang="en">
-                </div>
+                <!-- Hidden climber name field - auto-filled with current user -->
+                <input type="hidden" id="name" name="name" value="{{ session.get('user', 'Demo User') }}" required>
+                
                 <div class="mb-3">
                     <label for="route_id" class="form-label">Route</label>
                     <select class="form-control" id="route_id" name="route_id" required lang="en">
@@ -508,10 +507,9 @@
           </div>
           <form id="editForm" method="post" enctype="multipart/form-data" lang="en">
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="editName" class="form-label">Climber Name</label>
-                    <input class="form-control" type="text" id="editName" name="name" placeholder="Enter climber name" required lang="en">
-                </div>
+                <!-- Hidden climber name field - auto-filled with current user -->
+                <input type="hidden" id="editName" name="name" value="{{ session.get('user', 'Demo User') }}" required>
+                
                 <div class="mb-3">
                     <label for="editRoute" class="form-label">Route</label>
                     <select class="form-control" id="editRoute" name="route_id" required lang="en">
@@ -660,7 +658,7 @@
                     console.log('Edit clicked:', { logId, name, routeId, note, date, image }); // Debug log
                     
                     // Populate the edit form
-                    document.getElementById('editName').value = name || '';
+                    document.getElementById('editName').value = '{{ session.get("user", "Demo User") }}';
                     document.getElementById('editRoute').value = routeId || '';
                     document.getElementById('editNote').value = note || '';
                     
@@ -675,18 +673,29 @@
                     // Set the date in the edit date picker
                     if (date && date !== 'None') {
                         console.log('Setting date:', date); // Debug log
-                        // Parse YYYY-MM-DD format
-                        const dateParts = date.split('-');
-                        if (dateParts.length === 3) {
-                            const year = parseInt(dateParts[0]);
-                            const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
-                            const day = parseInt(dateParts[2]);
-                            const editDate = new Date(year, month, day);
-                            
+                        // Parse YYYY-MM-DD format or handle potential null/undefined values
+                        let editDate;
+                        if (typeof date === 'string' && date.includes('-')) {
+                            const dateParts = date.split('-');
+                            if (dateParts.length === 3) {
+                                const year = parseInt(dateParts[0]);
+                                const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
+                                const day = parseInt(dateParts[2]);
+                                editDate = new Date(year, month, day);
+                            }
+                        }
+                        
+                        if (editDate && !isNaN(editDate.getTime())) {
                             console.log('Parsed date:', editDate); // Debug log
-                            
                             editDatePicker.selectedDate = editDate;
                             editDatePicker.currentDate = new Date(editDate);
+                            editDatePicker.updateInput();
+                            editDatePicker.render();
+                        } else {
+                            console.log('Invalid date, setting to today'); // Debug log
+                            const today = new Date();
+                            editDatePicker.selectedDate = today;
+                            editDatePicker.currentDate = new Date(today);
                             editDatePicker.updateInput();
                             editDatePicker.render();
                         }
@@ -782,10 +791,10 @@
                 },
                 
                 formatDate: function(date) {
+                    const year = date.getFullYear();
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     const day = date.getDate().toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${month}/${day}/${year}`;
+                    return `${year}-${month}-${day}`;
                 },
                 
                 render: function() {
@@ -924,10 +933,10 @@
                 },
                 
                 formatDate: function(date) {
+                    const year = date.getFullYear();
                     const month = (date.getMonth() + 1).toString().padStart(2, '0');
                     const day = date.getDate().toString().padStart(2, '0');
-                    const year = date.getFullYear();
-                    return `${month}/${day}/${year}`;
+                    return `${year}-${month}-${day}`;
                 },
                 
                 render: function() {

@@ -9,6 +9,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Route Guide页面特定样式 */
+        .page-container {
+            max-width: 1600px !important;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
         .hero-section {
             padding: 4rem 0 2rem 0;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -118,6 +124,13 @@
             position: sticky;
             top: 0;
             z-index: 10;
+        }
+        
+        /* Category column specific width */
+        .routes-table thead th:nth-child(3),
+        .routes-table tbody td:nth-child(3) {
+            min-width: 180px;
+            width: 180px;
         }
         
         .routes-table tbody td {
