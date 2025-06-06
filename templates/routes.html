@@ -9,6 +9,28 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Route Guide页面特定样式 */
+        .hero-section {
+            padding: 4rem 0 2rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+        
         .filter-controls {
             background: #fff;
             border-radius: 1.2rem;
@@ -63,7 +85,7 @@
         }
         
         .table-header {
-            background: #E84444;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1.5rem 2rem;
             margin: 0;
@@ -118,11 +140,6 @@
             max-width: 200px;
         }
         
-        .route-category-col {
-            width: 150px;
-            min-width: 150px;
-        }
-        
         .route-category {
             font-weight: 600;
             padding: 0.3rem 0.8rem;
@@ -130,8 +147,6 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            white-space: nowrap;
-            display: inline-block;
         }
         
         .category-bouldering {
@@ -253,11 +268,17 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Route Guide</h1>
+            <p class="hero-subtitle">Comprehensive climbing route information with detailed skill requirements and difficulty ratings</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
     <div class="page-container">
         <div class="content-section fade-in">
-            <h1 class="page-title">ROUTE <span class="highlight">GUIDE</span></h1>
-            <p class="page-subtitle">Comprehensive climbing route information with detailed skill requirements and difficulty ratings</p>
-            
             <!-- Statistics Summary -->
             <div class="stats-summary">
                 <div class="stat-card scale-hover">
@@ -342,7 +363,7 @@
                             <tr>
                                 <th>Route No.</th>
                                 <th>Route Name</th>
-                                <th class="route-category-col">Category</th>
+                                <th>Category</th>
                                 <th>Balance</th>
                                 <th>Strength</th>
                                 <th>Technicality</th>
@@ -361,7 +382,7 @@
                                 data-name="{{ route.name.lower() }}">
                                 <td><strong>{{ route.id }}</strong></td>
                                 <td class="route-name">{{ route.name }}</td>
-                                <td class="route-category-col">
+                                <td>
                                     <span class="route-category {% if route.category == 'Bouldering' %}category-bouldering{% else %}category-sport{% endif %}">
                                         {{ route.category }}
                                     </span>

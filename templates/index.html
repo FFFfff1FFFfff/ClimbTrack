@@ -8,10 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap" rel="stylesheet">
     <style>
         body {
-            background: #E8E7E8;
+            background: linear-gradient(145deg, #fafbfc 0%, #f5f7fa 50%, #f9fbfd 100%);
+            background-attachment: fixed;
+            background-size: 400% 400%;
+            animation: subtle-shift 20s ease-in-out infinite;
             font-family: 'Saira Condensed', Arial, sans-serif;
             margin: 0;
             padding: 0;
+        }
+
+        @keyframes subtle-shift {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
         }
         .navbar-custom {
             background: transparent;
@@ -32,7 +40,7 @@
             text-transform: uppercase;
         }
         .navbar-custom .btn-login {
-            background: #E84444;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             border: none;
             border-radius: 2px;
@@ -66,7 +74,10 @@
             letter-spacing: 2px;
         }
         .hero-title .highlight {
-            color: #E84444;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .hero-desc {
             font-size: 1.5rem;
@@ -133,7 +144,7 @@
         }
         .feature-btn {
             margin-top: 1.2rem;
-            background: #E84444;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             border: none;
             border-radius: 2px;

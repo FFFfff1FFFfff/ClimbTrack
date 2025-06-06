@@ -2,58 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Profile - ClimbTrack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo User's Profile - ClimbTrack</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Profile页面特定样式 */
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
         .profile-header {
-            display: flex;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 1.2rem;
             margin-bottom: 2rem;
         }
-        
-        .profile-avatar-container {
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
             width: 120px;
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 4px solid white;
+            flex-shrink: 0;
         }
-        
-        .profile-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
+
+        .profile-text {
+            flex: 1;
         }
-        
-        .profile-avatar-container:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(0,0,0,0.25);
-        }
-        
-        .profile-info h2 {
-            color: #000;
+
+        .profile-name {
+            font-size: 2.7rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
+
         .profile-subtitle {
-            color: #666;
-            font-size: 1.1rem;
-            font-weight: 400;
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 0;
         }
         
         .stats-table {
             background: #fff;
+            font-size: 1.2rem;
         }
-        
+
         .stats-table th {
             background: #f8f9fa;
             color: #000;
@@ -62,25 +69,66 @@
             letter-spacing: 0.5px;
             width: 40%;
             padding: 1rem;
+            font-size: 1.1rem;
         }
         
         .stats-table td {
             background: #fff;
             color: #444;
             padding: 1rem;
+            font-size: 1.2rem;
         }
-        
+
+        .card-custom h5 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .highlight-text {
+            font-size: 1.6rem;
+        }
+
+        .form-label {
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            font-size: 1.1rem;
+        }
+
+        .card-custom {
+            font-size: 1.1rem;
+        }
+
+        .text-muted-custom {
+            font-size: 1.1rem;
+        }
+
         @media (max-width: 768px) {
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
+            .profile-container {
+                padding: 1rem;
             }
             
-            .profile-avatar-container {
-                margin-right: 0;
-                margin-bottom: 1rem;
-                width: 100px;
-                height: 100px;
+            .profile-header {
+                padding: 2rem 1rem;
+            }
+
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .profile-name {
+                font-size: 2.2rem;
+            }
+            
+            .profile-subtitle {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -103,19 +151,21 @@
             </div>
         </div>
     </nav>
-    
-    <div class="page-container">
-        <div class="content-section fade-in">
-            <div class="profile-header">
-                <div class="profile-avatar-container scale-hover">
-                    <img src="{{ url_for('static', filename='images/protfolio_image.jpg') }}" alt="Profile Avatar" class="profile-avatar">
-                </div>
-                <div class="profile-info">
-                    <h2>{{ username or 'Demo User' }}'s <span class="highlight">Profile</span></h2>
-                    <p class="profile-subtitle">ClimbTrack Member</p>
+
+    <div class="profile-container fade-in">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-info">
+                <img src="{{ url_for('static', filename='images/protfolio_image.jpg') }}" 
+                     alt="Profile Picture" class="profile-avatar">
+                <div class="profile-text">
+                    <h1 class="profile-name">{{username}}'s Profile</h1>
+                    <p class="profile-subtitle">Climbing enthusiast since 2023</p>
                 </div>
             </div>
-            
+        </div>
+
+        <div class="content-section fade-in">
             <h4 class="mb-4 highlight-text">SUMMARY STATISTICS</h4>
             <div class="table-custom">
                 <table class="table stats-table mb-0">
@@ -154,13 +204,13 @@
                         </tr>
                         <tr>
                             <th>Shoe Size / Wall Preference</th>
-                            <td>{{ stats.shoe_size or '38' }} / {{ stats.wall_pref or 'Overhang' }}</td>
+                            <td>{{ stats.shoe_size or '38' }} / {{ stats.wall_pref or 'Bouldering' }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        
+
         <div class="content-section fade-in">
             <h4 class="mb-4 highlight-text">STATS VISUALIZATION</h4>
             <div class="row mb-4">
@@ -188,12 +238,12 @@
                     <div class="card-custom h-100">
                         <h5 class="mb-3">Activity Heatmap (Last 30 Days)</h5>
                         <div id="heatmap" style="display:grid;grid-template-columns:repeat(15,16px);gap:2px;"></div>
-                        <div class="mt-2 text-muted-custom" style="font-size:0.95rem;">Each square = 1 day, darker = more activity</div>
+                        <div class="mt-2 text-muted-custom" style="font-size:1.1rem;">Each square = 1 day, darker = more activity</div>
                     </div>
                 </div>
             </div>
         </div>
-        
+
         <div class="content-section fade-in">
             <h4 class="mb-4 highlight-text">TRAINING LOG & NOTES</h4>
             <div class="card-custom p-3 mb-4">
@@ -216,10 +266,12 @@
             </div>
         </div>
     </div>
-    
+
     <footer class="footer">
         &copy; 2024 ClimbTrack. All rights reserved.
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
     // Radar Chart (Ability)
@@ -231,12 +283,12 @@
             datasets: [{
                 label: 'Ability',
                 data: [7, 6, 8, 5, 6, 7],
-                backgroundColor: 'rgba(44,62,80,0.15)',
-                borderColor: '#2C3E50',
-                pointBackgroundColor: '#2C3E50',
+                backgroundColor: 'rgba(102, 126, 234, 0.15)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                pointBackgroundColor: 'rgba(102, 126, 234, 1)',
                 pointBorderColor: '#fff',
                 pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: '#2C3E50',
+                pointHoverBorderColor: 'rgba(102, 126, 234, 1)',
                 borderWidth: 2
             }]
         },
@@ -251,10 +303,10 @@
     new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Slab', 'Vertical', 'Overhang'],
+            labels: ['Bouldering', 'Sport Climbing'],
             datasets: [{
-                data: [12, 18, 30],
-                backgroundColor: ['#5DADE2', '#48C9B0', '#2C3E50'],
+                data: [35, 25],
+                backgroundColor: ['rgba(102, 126, 234, 1)', '#48C9B0'],
                 borderWidth: 1
             }]
         },
@@ -272,8 +324,8 @@
             datasets: [{
                 label: 'Max V Grade',
                 data: [3, 4, 5, 5, 6, 7, 7],
-                borderColor: '#2C3E50',
-                backgroundColor: 'rgba(44,62,80,0.10)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                backgroundColor: 'rgba(102, 126, 234, 0.10)',
                 fill: true,
                 tension: 0.3,
                 pointRadius: 4
