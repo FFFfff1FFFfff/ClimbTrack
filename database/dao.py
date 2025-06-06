@@ -209,26 +209,27 @@ class ClimbLogDAO(BaseDAO):
         """创建攀登记录"""
         query = '''
             INSERT INTO climb_logs (session_id, user_id, climb_name, climb_type, grade, 
-                                  attempt_result, attempts_count, image_filename, notes, timestamp)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                  route_id, route_name, attempt_result, attempts_count, 
+                                  image_filename, notes, timestamp)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         return self.db.execute_insert(query, (
             log.session_id, log.user_id, log.climb_name, log.climb_type, log.grade,
-            log.attempt_result, log.attempts_count, log.image_filename, log.notes, 
-            log.timestamp or datetime.now()
+            log.route_id, log.route_name, log.attempt_result, log.attempts_count, 
+            log.image_filename, log.notes, log.timestamp or datetime.now()
         ))
     
     def update(self, id: int, log: ClimbLog) -> int:
         """更新攀登记录"""
         query = '''
             UPDATE climb_logs 
-            SET climb_name = ?, climb_type = ?, grade = ?, attempt_result = ?, 
-                attempts_count = ?, image_filename = ?, notes = ?
+            SET session_id = ?, climb_name = ?, climb_type = ?, grade = ?, route_id = ?, route_name = ?,
+                attempt_result = ?, attempts_count = ?, image_filename = ?, notes = ?
             WHERE id = ?
         '''
         return self.db.execute_update(query, (
-            log.climb_name, log.climb_type, log.grade, log.attempt_result,
-            log.attempts_count, log.image_filename, log.notes, id
+            log.session_id, log.climb_name, log.climb_type, log.grade, log.route_id, log.route_name,
+            log.attempt_result, log.attempts_count, log.image_filename, log.notes, id
         ))
     
     def get_by_user_id(self, user_id: int) -> List[Dict[str, Any]]:
@@ -421,6 +422,95 @@ class CrowdDetectionDAO(BaseDAO):
         results = self.db.execute_query(query, (gym_id,))
         return [dict(row) for row in results]
 
+class RouteDAO(BaseDAO):
+    """攀登路线数据访问对象"""
+    
+    def __init__(self):
+        super().__init__('routes')
+    
+    def create(self, route: Route) -> int:
+        """创建攀登路线"""
+        query = '''
+            INSERT INTO routes (name, category, balance, strength, technicality, flexibility, 
+                              strategy, endurance, mental_challenge, overall_difficulty, description, image_filename)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        '''
+        return self.db.execute_insert(query, (
+            route.name, route.category, route.balance, route.strength, route.technicality,
+            route.flexibility, route.strategy, route.endurance, route.mental_challenge,
+            route.overall_difficulty, route.description, route.image_filename
+        ))
+    
+    def update(self, id: int, route: Route) -> int:
+        """更新攀登路线"""
+        query = '''
+            UPDATE routes 
+            SET name = ?, category = ?, balance = ?, strength = ?, technicality = ?, 
+                flexibility = ?, strategy = ?, endurance = ?, mental_challenge = ?, 
+                overall_difficulty = ?, description = ?, image_filename = ?, updated_at = ?
+            WHERE id = ?
+        '''
+        return self.db.execute_update(query, (
+            route.name, route.category, route.balance, route.strength, route.technicality,
+            route.flexibility, route.strategy, route.endurance, route.mental_challenge,
+            route.overall_difficulty, route.description, route.image_filename, 
+            datetime.now(), id
+        ))
+    
+    def get_by_category(self, category: str) -> List[Dict[str, Any]]:
+        """根据类别获取路线"""
+        query = "SELECT * FROM routes WHERE category = ? ORDER BY overall_difficulty, name"
+        results = self.db.execute_query(query, (category,))
+        return [dict(row) for row in results]
+    
+    def get_by_difficulty_range(self, min_difficulty: str, max_difficulty: str, category: str = None) -> List[Dict[str, Any]]:
+        """根据难度范围获取路线（基于等级系统）"""
+        if category:
+            if category == "Bouldering":
+                # 对V等级进行排序
+                query = """
+                    SELECT * FROM routes 
+                    WHERE category = ? AND 
+                          CAST(SUBSTR(overall_difficulty, 2) AS INTEGER) BETWEEN 
+                          CAST(SUBSTR(?, 2) AS INTEGER) AND CAST(SUBSTR(?, 2) AS INTEGER)
+                    ORDER BY CAST(SUBSTR(overall_difficulty, 2) AS INTEGER), name
+                """
+                results = self.db.execute_query(query, (category, min_difficulty, max_difficulty))
+            else:  # Sport Climbing
+                # 对法式等级进行排序（简化版）
+                query = """
+                    SELECT * FROM routes 
+                    WHERE category = ? AND overall_difficulty BETWEEN ? AND ?
+                    ORDER BY overall_difficulty, name
+                """
+                results = self.db.execute_query(query, (category, min_difficulty, max_difficulty))
+        else:
+            # 不区分类别时的查询
+            query = "SELECT * FROM routes WHERE overall_difficulty BETWEEN ? AND ? ORDER BY overall_difficulty, name"
+            results = self.db.execute_query(query, (min_difficulty, max_difficulty))
+        
+        return [dict(row) for row in results]
+    
+    def search_by_name(self, name_pattern: str) -> List[Dict[str, Any]]:
+        """根据名称模糊搜索路线"""
+        query = "SELECT * FROM routes WHERE name LIKE ? ORDER BY name"
+        results = self.db.execute_query(query, (f'%{name_pattern}%',))
+        return [dict(row) for row in results]
+    
+    def get_all_sorted(self) -> List[Dict[str, Any]]:
+        """获取所有路线，按类别和难度排序"""
+        query = """
+            SELECT * FROM routes 
+            ORDER BY category,
+                     CASE category
+                         WHEN 'Bouldering' THEN CAST(SUBSTR(overall_difficulty, 2) AS INTEGER)
+                         ELSE overall_difficulty
+                     END,
+                     name
+        """
+        results = self.db.execute_query(query)
+        return [dict(row) for row in results]
+
 # DAO实例
 user_dao = UserDAO()
 user_profile_dao = UserProfileDAO()
@@ -430,4 +520,5 @@ climb_log_dao = ClimbLogDAO()
 personal_best_dao = PersonalBestDAO()
 climbing_gym_dao = ClimbingGymDAO()
 movement_note_dao = MovementNoteDAO()
-crowd_detection_dao = CrowdDetectionDAO() 
+crowd_detection_dao = CrowdDetectionDAO()
+route_dao = RouteDAO() 

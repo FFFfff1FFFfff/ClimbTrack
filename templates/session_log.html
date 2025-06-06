@@ -39,6 +39,7 @@
         .timeline-date { color: #888; font-size: 1rem; margin-bottom: 0.5rem; }
         .timeline-grade { color: #E84444; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
         .timeline-type { color: #666; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.3rem; }
+        .timeline-route-info { color: #888; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.3rem; }
         .timeline-note { color: #222; font-size: 1.1rem; }
         .no-log { color: #aaa; text-align: center; margin-top: 3rem; font-size: 1.2rem; }
         .back-btn { margin-bottom: 2rem; }
@@ -340,7 +341,7 @@
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
                     {% if session.get('user') %}
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">{{ session['user'] }}</a></li>
                         <li class="nav-item"><a class="btn btn-login" href="{{ url_for('logout') }}">Logout</a></li>
@@ -375,8 +376,11 @@
                             <div class="timeline-img"></div>
                         {% endif %}
                         <div class="timeline-content">
-                            <div class="timeline-grade">{{ log.grade }}</div>
-                            <div class="timeline-type">{{ log.type|title }}</div>
+                            <div class="timeline-grade">Route #{{ log.route_id }}</div>
+                            <div class="timeline-type">{{ log.route_name }}</div>
+                            {% if log.route_type and log.route_difficulty %}
+                            <div class="timeline-route-info">{{ log.route_type }} - {{ log.route_difficulty }}</div>
+                            {% endif %}
                             <div class="timeline-note">{{ log.note }}</div>
                             <div class="timeline-date">{{ log.date }}</div>
                         </div>
@@ -384,8 +388,7 @@
                             <button class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" 
                                     data-bs-log-id="{{ log.id }}" 
                                     data-bs-log-name="{{ log.name }}"
-                                    data-bs-log-type="{{ log.type }}"
-                                    data-bs-log-grade="{{ log.grade }}"
+                                    data-bs-log-route-id="{{ log.route_id }}"
                                     data-bs-log-note="{{ log.note }}"
                                     data-bs-log-date="{{ log.session_date }}"
                                     data-bs-log-image="{{ log.image }}">✏</button>
@@ -414,10 +417,12 @@
                     <input class="form-control" type="text" id="name" name="name" placeholder="Enter climber name" required lang="en">
                 </div>
                 <div class="mb-3">
-                    <label for="type" class="form-label">Climbing Type</label>
-                    <select class="form-control" id="type" name="type" required lang="en">
-                        <option value="bouldering">Bouldering</option>
-                        <option value="sport">Sport Climbing</option>
+                    <label for="route_id" class="form-label">Route</label>
+                    <select class="form-control" id="route_id" name="route_id" required lang="en">
+                        <option value="">Select a route</option>
+                        {% for route in routes %}
+                            <option value="{{ route.id }}">Route #{{ route.id }} - {{ route.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
@@ -426,10 +431,6 @@
                         <input type="file" id="image" name="image" accept="image/*" required lang="en" title="Choose photo file" data-locale="en-US">
                         <label for="image" class="custom-file-label">Choose photo file</label>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="grade" class="form-label">Grade / Difficulty</label>
-                    <input class="form-control" type="text" id="grade" name="grade" placeholder="e.g. V4, 6b+, 5.11a" required lang="en">
                 </div>
                 <div class="mb-3">
                     <label for="note" class="form-label">Session Notes</label>
@@ -483,10 +484,12 @@
                     <input class="form-control" type="text" id="editName" name="name" placeholder="Enter climber name" required lang="en">
                 </div>
                 <div class="mb-3">
-                    <label for="editType" class="form-label">Climbing Type</label>
-                    <select class="form-control" id="editType" name="type" required lang="en">
-                        <option value="bouldering">Bouldering</option>
-                        <option value="sport">Sport Climbing</option>
+                    <label for="editRoute" class="form-label">Route</label>
+                    <select class="form-control" id="editRoute" name="route_id" required lang="en">
+                        <option value="">Select a route</option>
+                        {% for route in routes %}
+                            <option value="{{ route.id }}">Route #{{ route.id }} - {{ route.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="mb-3">
@@ -498,10 +501,6 @@
                     <div id="currentImageDisplay" class="mt-2" style="display: none;">
                         <small class="text-muted">Current photo: <span id="currentImageName"></span></small>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="editGrade" class="form-label">Grade / Difficulty</label>
-                    <input class="form-control" type="text" id="editGrade" name="grade" placeholder="e.g. V4, 6b+, 5.11a" required lang="en">
                 </div>
                 <div class="mb-3">
                     <label for="editNote" class="form-label">Session Notes</label>
@@ -624,18 +623,16 @@
                 button.addEventListener('click', function() {
                     const logId = this.getAttribute('data-bs-log-id');
                     const name = this.getAttribute('data-bs-log-name');
-                    const type = this.getAttribute('data-bs-log-type');
-                    const grade = this.getAttribute('data-bs-log-grade');
+                    const routeId = this.getAttribute('data-bs-log-route-id');
                     const note = this.getAttribute('data-bs-log-note');
                     const date = this.getAttribute('data-bs-log-date');
                     const image = this.getAttribute('data-bs-log-image');
                     
-                    console.log('Edit clicked:', { logId, name, type, grade, note, date, image }); // Debug log
+                    console.log('Edit clicked:', { logId, name, routeId, note, date, image }); // Debug log
                     
                     // Populate the edit form
                     document.getElementById('editName').value = name || '';
-                    document.getElementById('editType').value = type || 'bouldering';
-                    document.getElementById('editGrade').value = grade || '';
+                    document.getElementById('editRoute').value = routeId || '';
                     document.getElementById('editNote').value = note || '';
                     
                     // Show current image info
