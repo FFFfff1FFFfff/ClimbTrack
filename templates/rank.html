@@ -30,7 +30,7 @@
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
                     {% if session.get('user') %}
                         <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">{{ session['user'] }}</a></li>
                         <li class="nav-item"><a class="btn btn-login" href="{{ url_for('logout') }}">Logout</a></li>

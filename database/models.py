@@ -77,6 +77,8 @@ class ClimbLog:
     climb_name: str = ""
     climb_type: str = ""
     grade: str = ""
+    route_id: Optional[int] = None  # 关联的路线ID
+    route_name: str = ""  # 路线名称（冗余存储便于显示）
     attempt_result: str = ""
     attempts_count: int = 1
     image_filename: str = ""
@@ -160,6 +162,28 @@ class MediaFile:
     file_size: int = 0
     upload_date: Optional[datetime] = None
     description: str = ""
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+@dataclass
+class Route:
+    """攀登路线模型"""
+    id: Optional[int] = None
+    name: str = ""
+    category: str = ""  # "Bouldering" or "Sport Climbing"
+    balance: int = 0
+    strength: int = 0
+    technicality: int = 0
+    flexibility: int = 0
+    strategy: int = 0
+    endurance: int = 0
+    mental_challenge: int = 0
+    overall_difficulty: str = ""  # Changed from int to str (V0-V16 for Bouldering, 5a-9b+ for Sport Climbing)
+    description: str = ""
+    image_filename: str = ""
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self) 

@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 
 # 导入数据库服务
-from database.services import AuthService, UserService, ClimbingService, StatisticsService, GymService, NoteService
+from database.services import AuthService, UserService, ClimbingService, StatisticsService, GymService, NoteService, RouteService
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -18,6 +18,10 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/session-log', methods=['GET', 'POST'])
 def session_log():
@@ -33,34 +37,34 @@ def session_log():
     if request.method == 'POST':
         file = request.files.get('image')
         note = request.form.get('note', '')
-        grade = request.form.get('grade', '')
+        route_id = request.form.get('route_id')
         date_input = request.form.get('date')
         name = request.form.get('name', '')
-        climb_type = request.form.get('type', '')
         
-        if not all([grade, name, climb_type]):
-            flash('Grade, name, and type are required.')
+        if not all([route_id, name]):
+            flash('Route and climber name are required.')
             return redirect(url_for('session_log'))
         
-        # 处理图片上传
+        route = RouteService.get_route_by_id(int(route_id))
+        if not route:
+            flash('Invalid route selected.')
+            return redirect(url_for('session_log'))
+        
         filename = None
         if file and allowed_file(file.filename):
             filename = datetime.now().strftime('%Y%m%d%H%M%S_') + secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
-        # 确定日期
         session_date = date_input if date_input else datetime.now().strftime('%Y-%m-%d')
         
-        # 准备攀登数据
         climb_data = {
             'name': name,
-            'type': climb_type,
-            'grade': grade,
+            'route_id': route_id,
+            'route_name': route['name'],
             'notes': note,
             'image_filename': filename or ''
         }
         
-        # 创建攀登记录
         climb_log_id = ClimbingService.create_climb_log(user_id, session_date, climb_data)
         
         if climb_log_id:
@@ -70,10 +74,11 @@ def session_log():
         
         return redirect(url_for('session_log'))
     
-    # 获取用户的攀登记录
     grouped_logs, session_logs = ClimbingService.get_user_climb_logs_grouped(user_id)
     
-    return render_template('session_log.html', session_logs=session_logs, grouped_logs=grouped_logs)
+    routes = RouteService.get_all_routes()
+    
+    return render_template('session_log.html', session_logs=session_logs, grouped_logs=grouped_logs, routes=routes)
 
 @app.route('/crowd-detection')
 def crowd_detection():
@@ -180,6 +185,12 @@ def rank():
     return render_template('rank.html', 
                          bouldering_ranks=rankings['bouldering'], 
                          sport_ranks=rankings['sport'])
+
+@app.route('/routes')
+def routes():
+    """路线指南页面 - 从数据库获取路线数据"""
+    routes_data = RouteService.get_all_routes()
+    return render_template('routes.html', routes=routes_data)
 
 # API路由 - 用户管理
 @app.route('/api/users', methods=['GET'])
@@ -396,15 +407,20 @@ def edit_session(log_id):
     
     # Get form data
     name = request.form.get('name', '')
-    climb_type = request.form.get('type', '')
-    grade = request.form.get('grade', '')
+    route_id = request.form.get('route_id', '')
     note = request.form.get('note', '')
     date_input = request.form.get('date')
     
-    print(f"🔍 Edit session {log_id}: name={name}, type={climb_type}, grade={grade}, date={date_input}")  # Debug
+    print(f"🔍 Edit session {log_id}: name={name}, route_id={route_id}, date={date_input}")  # Debug
     
-    if not all([name, climb_type, grade]):
-        flash('Name, type, and grade are required.')
+    if not all([name, route_id]):
+        flash('Name and route are required.')
+        return redirect(url_for('session_log'))
+    
+    # Get route information
+    route = RouteService.get_route_by_id(int(route_id))
+    if not route:
+        flash('Invalid route selected.')
         return redirect(url_for('session_log'))
     
     # Handle image upload
@@ -418,15 +434,15 @@ def edit_session(log_id):
     # Prepare climb data
     climb_data = {
         'name': name,
-        'type': climb_type,
-        'grade': grade,
+        'route_id': route_id,
+        'route_name': route['name'],
         'notes': note
     }
     
     print(f"📝 Calling update_climb_log with: log_id={log_id}, user_id={user_id}, climb_data={climb_data}, new_image={new_image_filename}")  # Debug
     
     # Update the climb log
-    if ClimbingService.update_climb_log(log_id, user_id, climb_data, new_image_filename):
+    if ClimbingService.update_climb_log(log_id, user_id, climb_data, new_image_filename, date_input):
         flash('Session updated successfully!')
         print(f"✅ Session {log_id} updated successfully")  # Debug
     else:
@@ -443,5 +459,5 @@ if __name__ == '__main__':
         print("❌ 数据库文件不存在！请先运行 database/init_database.py 初始化数据库")
         print("💡 运行命令: python database/init_database.py")
     
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000)
 

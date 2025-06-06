@@ -149,7 +149,7 @@ class ClimbingService:
     
     @staticmethod
     def create_climb_log(user_id: int, session_date: str, climb_data: Dict[str, Any]) -> Optional[int]:
-        """创建攀登记录，包括会话管理和个人最佳更新"""
+        """创建攀登记录，包括会话管理"""
         try:
             # 获取或创建当天的会话
             session = climbing_session_dao.get_by_user_and_date(user_id, session_date)
@@ -169,8 +169,10 @@ class ClimbingService:
                 session_id=session_id,
                 user_id=user_id,
                 climb_name=climb_data['name'],
-                climb_type=climb_data['type'],
-                grade=climb_data['grade'],
+                climb_type='',  # No longer used
+                grade='',  # No longer used  
+                route_id=climb_data.get('route_id'),
+                route_name=climb_data.get('route_name', ''),
                 attempt_result=climb_data.get('attempt_result', 'completed'),
                 attempts_count=climb_data.get('attempts_count', 1),
                 image_filename=climb_data.get('image_filename', ''),
@@ -178,9 +180,6 @@ class ClimbingService:
                 timestamp=datetime.now()
             )
             climb_log_id = climb_log_dao.create(climb_log)
-            
-            # 更新个人最佳记录
-            ClimbingService.update_personal_best(user_id, climb_data['type'], climb_data['grade'], climb_log_id)
             
             # 更新用户统计
             StatisticsService.update_user_statistics(user_id)
@@ -232,16 +231,29 @@ class ClimbingService:
         formatted_logs = []
         
         for log in logs:
+            # Get route information if route_id exists
+            route_type = ''
+            route_difficulty = ''
+            if log['route_id']:
+                route = route_dao.get_by_id(log['route_id'])
+                if route:
+                    route_type = route['category']
+                    route_difficulty = route['overall_difficulty']
+            
             # 转换为与模板兼容的格式
             log_dict = {
                 'id': log['id'],  # Add ID for delete functionality
                 'date': log['timestamp'],
                 'session_date': log['session_date'],  # Add session_date for edit functionality
                 'image': log['image_filename'],
-                'grade': log['grade'],
+                'route_id': log['route_id'],  # Add route ID
+                'route_name': log['route_name'],  # Add route name
+                'route_type': route_type,  # Add route type from route data
+                'route_difficulty': route_difficulty,  # Add route difficulty from route data
                 'note': log['notes'],
                 'name': log['climb_name'],
-                'type': log['climb_type']
+                'type': log['climb_type'],  # Keep for compatibility but may be empty
+                'grade': log['grade']  # Keep for compatibility but may be empty
             }
             log_day = log['session_date']
             grouped_logs[log_day].append(log_dict)
@@ -277,10 +289,10 @@ class ClimbingService:
             return False
     
     @staticmethod
-    def update_climb_log(log_id: int, user_id: int, climb_data: Dict[str, Any], new_image_filename: Optional[str] = None) -> bool:
+    def update_climb_log(log_id: int, user_id: int, climb_data: Dict[str, Any], new_image_filename: Optional[str] = None, new_session_date: Optional[str] = None) -> bool:
         """更新攀登记录"""
         try:
-            print(f"🔍 update_climb_log called: log_id={log_id}, user_id={user_id}")  # Debug
+            print(f"🔍 update_climb_log called: log_id={log_id}, user_id={user_id}, new_session_date={new_session_date}")  # Debug
             
             # First verify that this log belongs to the user
             existing_log = climb_log_dao.get_by_id(log_id)
@@ -292,6 +304,28 @@ class ClimbingService:
                 return False
             
             print(f"✅ Found existing log: {existing_log}")  # Debug
+            
+            # Handle session date update
+            session_id = existing_log['session_id']
+            if new_session_date:
+                print(f"📅 Updating session date to: {new_session_date}")  # Debug
+                # Check if we need to move to a different session
+                current_session = climbing_session_dao.get_by_id(existing_log['session_id'])
+                if current_session and current_session['session_date'] != new_session_date:
+                    # Get or create session for the new date
+                    target_session = climbing_session_dao.get_by_user_and_date(user_id, new_session_date)
+                    if not target_session:
+                        new_session = ClimbingSession(
+                            user_id=user_id,
+                            session_date=new_session_date,
+                            location=current_session.get('location', 'Climbing Gym'),
+                            notes=f'Session on {new_session_date}'
+                        )
+                        session_id = climbing_session_dao.create(new_session)
+                        print(f"🆕 Created new session {session_id} for date {new_session_date}")  # Debug
+                    else:
+                        session_id = target_session['id']
+                        print(f"🔄 Using existing session {session_id} for date {new_session_date}")  # Debug
             
             # Handle image file update
             image_filename = existing_log['image_filename']
@@ -308,11 +342,13 @@ class ClimbingService:
             # Update the climb log
             updated_log = ClimbLog(
                 id=log_id,
-                session_id=existing_log['session_id'],
+                session_id=session_id,  # Use the updated session_id
                 user_id=user_id,
                 climb_name=climb_data['name'],
-                climb_type=climb_data['type'],
-                grade=climb_data['grade'],
+                climb_type='',  # No longer used
+                grade='',  # No longer used
+                route_id=climb_data.get('route_id'),
+                route_name=climb_data.get('route_name', ''),
                 attempt_result=climb_data.get('attempt_result', existing_log['attempt_result']),
                 attempts_count=climb_data.get('attempts_count', existing_log['attempts_count']),
                 image_filename=image_filename,
@@ -324,9 +360,6 @@ class ClimbingService:
             
             result = climb_log_dao.update(log_id, updated_log)
             print(f"🔄 DAO update result: {result}")  # Debug
-            
-            # Update personal best if grade improved
-            ClimbingService.update_personal_best(user_id, climb_data['type'], climb_data['grade'], log_id)
             
             # Update user statistics
             if result > 0:
@@ -529,4 +562,75 @@ class NoteService:
             movement_type=note_data.get('movement_type', ''),
             tags=note_data.get('tags', '')
         )
-        return movement_note_dao.update(note_id, note) > 0 
+        return movement_note_dao.update(note_id, note) > 0
+
+class RouteService:
+    """路线服务"""
+    
+    @staticmethod
+    def get_all_routes() -> List[Dict[str, Any]]:
+        """获取所有路线"""
+        return route_dao.get_all_sorted()
+    
+    @staticmethod
+    def get_routes_by_category(category: str) -> List[Dict[str, Any]]:
+        """根据类别获取路线"""
+        return route_dao.get_by_category(category)
+    
+    @staticmethod
+    def get_routes_by_difficulty(min_difficulty: str, max_difficulty: str, category: str = None) -> List[Dict[str, Any]]:
+        """根据难度范围获取路线（支持标准攀岩等级）"""
+        return route_dao.get_by_difficulty_range(min_difficulty, max_difficulty, category)
+    
+    @staticmethod
+    def search_routes_by_name(name_pattern: str) -> List[Dict[str, Any]]:
+        """根据名称搜索路线"""
+        return route_dao.search_by_name(name_pattern)
+    
+    @staticmethod
+    def create_route(route_data: Dict[str, Any]) -> Optional[int]:
+        """创建新路线"""
+        route = Route(
+            name=route_data['name'],
+            category=route_data['category'],
+            balance=route_data['balance'],
+            strength=route_data['strength'],
+            technicality=route_data['technicality'],
+            flexibility=route_data['flexibility'],
+            strategy=route_data['strategy'],
+            endurance=route_data['endurance'],
+            mental_challenge=route_data['mental_challenge'],
+            overall_difficulty=route_data['overall_difficulty'],
+            description=route_data.get('description', ''),
+            image_filename=route_data.get('image_filename', '')
+        )
+        return route_dao.create(route)
+    
+    @staticmethod
+    def update_route(route_id: int, route_data: Dict[str, Any]) -> bool:
+        """更新路线"""
+        route = Route(
+            name=route_data['name'],
+            category=route_data['category'],
+            balance=route_data['balance'],
+            strength=route_data['strength'],
+            technicality=route_data['technicality'],
+            flexibility=route_data['flexibility'],
+            strategy=route_data['strategy'],
+            endurance=route_data['endurance'],
+            mental_challenge=route_data['mental_challenge'],
+            overall_difficulty=route_data['overall_difficulty'],
+            description=route_data.get('description', ''),
+            image_filename=route_data.get('image_filename', '')
+        )
+        return route_dao.update(route_id, route) > 0
+    
+    @staticmethod
+    def delete_route(route_id: int) -> bool:
+        """删除路线"""
+        return route_dao.delete_by_id(route_id) > 0
+    
+    @staticmethod
+    def get_route_by_id(route_id: int) -> Optional[Dict[str, Any]]:
+        """根据ID获取路线"""
+        return route_dao.get_by_id(route_id) 

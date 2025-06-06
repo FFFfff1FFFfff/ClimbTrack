@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Guide - ClimbTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Saira Condensed', Arial, sans-serif; 
+            background: #FAFBFC; 
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        
+        .navbar-custom { 
+            background: transparent; 
+            padding: 1.2rem 3rem 0.5rem 3rem; 
+        }
+        .navbar-custom .navbar-brand { 
+            color: #000; 
+            font-size: 2rem; 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+        }
+        .navbar-custom .nav-link { 
+            color: #000; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            margin-right: 1.5rem; 
+            text-transform: uppercase; 
+        }
+        .navbar-custom .btn-login { 
+            background: #E84444; 
+            color: #fff; 
+            border: none; 
+            border-radius: 2px; 
+            padding: 0.4rem 1.2rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 1.1rem; 
+        }
+        
+        .hero-section {
+            padding: 4rem 0 2rem 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+        
+        .content-section {
+            padding: 3rem 0;
+        }
+        
+        .filter-controls {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        
+        .filter-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .routes-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 0;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            margin: 0;
+        }
+        
+        .table-header h3 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .routes-table {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        
+        .routes-table thead th {
+            background: #f8f9fa;
+            border: none;
+            padding: 1rem 0.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .routes-table tbody td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #f0f0f0;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .routes-table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+        
+        .route-name {
+            font-weight: 600;
+            color: #2c3e50;
+            text-align: left !important;
+            max-width: 200px;
+        }
+        
+        .route-category {
+            font-weight: 600;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .category-bouldering {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .category-sport {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .difficulty-score {
+            font-weight: 600;
+            padding: 0.4rem 0.6rem;
+            border-radius: 8px;
+            min-width: 40px;
+            display: inline-block;
+        }
+        
+        .difficulty-1-3 { background: #e8f5e8; color: #2e7d32; }
+        .difficulty-4-6 { background: #fff3e0; color: #ef6c00; }
+        .difficulty-7-8 { background: #fce4ec; color: #c2185b; }
+        .difficulty-9-10 { background: #f3e5f5; color: #7b1fa2; }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+        
+        .table-responsive {
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .routes-table {
+                font-size: 0.8rem;
+            }
+            .routes-table thead th,
+            .routes-table tbody td {
+                padding: 0.5rem 0.3rem;
+            }
+            .route-name {
+                max-width: 120px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">ClimbTrack</a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('about') }}">About</a></li>
+                    {% if session.get('user') %}
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">{{ session['user'] }}</a></li>
+                        <li class="nav-item"><a class="btn btn-login" href="{{ url_for('logout') }}">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="btn btn-login" href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Route Guide</h1>
+            <p class="hero-subtitle">Comprehensive climbing route information with detailed skill requirements and difficulty ratings</p>
+        </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+        <div class="container">
+            <!-- Statistics Summary -->
+            <div class="stats-summary">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-mountain"></i></div>
+                    <div class="stat-number">{{ routes|length }}</div>
+                    <div class="stat-label">Total Routes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-cube"></i></div>
+                    <div class="stat-number">{{ routes|selectattr('category', 'equalto', 'Bouldering')|list|length }}</div>
+                    <div class="stat-label">Bouldering Routes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-anchor"></i></div>
+                    <div class="stat-number">{{ routes|selectattr('category', 'equalto', 'Sport Climbing')|list|length }}</div>
+                    <div class="stat-label">Sport Climbing Routes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-star"></i></div>
+                    <div class="stat-number">
+                        {% set v_grades = routes|selectattr('category', 'equalto', 'Bouldering')|map(attribute='overall_difficulty')|list %}
+                        {% set sport_grades = routes|selectattr('category', 'equalto', 'Sport Climbing')|map(attribute='overall_difficulty')|list %}
+                        {% if v_grades and sport_grades %}
+                            {{ v_grades|max }} / {{ sport_grades|max }}
+                        {% elif v_grades %}
+                            {{ v_grades|max }}
+                        {% elif sport_grades %}
+                            {{ sport_grades|max }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Max Difficulty</div>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <h4 class="filter-title"><i class="fas fa-filter"></i> Filter Routes</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="filter-group">
+                            <label for="categoryFilter">Category</label>
+                            <select class="form-select" id="categoryFilter">
+                                <option value="">All Categories</option>
+                                <option value="Bouldering">Bouldering</option>
+                                <option value="Sport Climbing">Sport Climbing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="filter-group">
+                            <label for="difficultyFilter">Difficulty Range</label>
+                            <select class="form-select" id="difficultyFilter">
+                                <option value="">All Difficulties</option>
+                                <option value="beginner">Beginner (V0-V2 / 5a-5c)</option>
+                                <option value="intermediate">Intermediate (V3-V5 / 6a-6c)</option>
+                                <option value="advanced">Advanced (V6-V8 / 7a-7c)</option>
+                                <option value="expert">Expert (V9+ / 8a+)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="filter-group">
+                            <label for="searchFilter">Search Routes</label>
+                            <input type="text" class="form-control" id="searchFilter" placeholder="Search by route name...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Routes Table -->
+            <div class="routes-table-container">
+                <div class="table-header">
+                    <h3><i class="fas fa-route"></i> Route Information</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table routes-table" id="routesTable">
+                        <thead>
+                            <tr>
+                                <th>Route No.</th>
+                                <th>Route Name</th>
+                                <th>Category</th>
+                                <th>Balance</th>
+                                <th>Strength</th>
+                                <th>Technicality</th>
+                                <th>Flexibility</th>
+                                <th>Strategy</th>
+                                <th>Endurance</th>
+                                <th>Mental Challenge</th>
+                                <th>Overall Difficulty</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for route in routes %}
+                            <tr class="route-row" 
+                                data-category="{{ route.category }}" 
+                                data-difficulty="{{ route.overall_difficulty }}"
+                                data-name="{{ route.name.lower() }}">
+                                <td><strong>{{ route.id }}</strong></td>
+                                <td class="route-name">{{ route.name }}</td>
+                                <td>
+                                    <span class="route-category {% if route.category == 'Bouldering' %}category-bouldering{% else %}category-sport{% endif %}">
+                                        {{ route.category }}
+                                    </span>
+                                </td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.balance <= 3 else 
+                                    '4-6' if route.balance <= 6 else 
+                                    '7-8' if route.balance <= 8 else 
+                                    '9-10' }}">{{ route.balance }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.strength <= 3 else 
+                                    '4-6' if route.strength <= 6 else 
+                                    '7-8' if route.strength <= 8 else 
+                                    '9-10' }}">{{ route.strength }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.technicality <= 3 else 
+                                    '4-6' if route.technicality <= 6 else 
+                                    '7-8' if route.technicality <= 8 else 
+                                    '9-10' }}">{{ route.technicality }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.flexibility <= 3 else 
+                                    '4-6' if route.flexibility <= 6 else 
+                                    '7-8' if route.flexibility <= 8 else 
+                                    '9-10' }}">{{ route.flexibility }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.strategy <= 3 else 
+                                    '4-6' if route.strategy <= 6 else 
+                                    '7-8' if route.strategy <= 8 else 
+                                    '9-10' }}">{{ route.strategy }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.endurance <= 3 else 
+                                    '4-6' if route.endurance <= 6 else 
+                                    '7-8' if route.endurance <= 8 else 
+                                    '9-10' }}">{{ route.endurance }}</span></td>
+                                <td><span class="difficulty-score difficulty-{{ 
+                                    '1-3' if route.mental_challenge <= 3 else 
+                                    '4-6' if route.mental_challenge <= 6 else 
+                                    '7-8' if route.mental_challenge <= 8 else 
+                                    '9-10' }}">{{ route.mental_challenge }}</span></td>
+                                <td>
+                                    {% set grade = route.overall_difficulty %}
+                                    {% if route.category == 'Bouldering' %}
+                                        {% set v_level = grade[1:]|int if grade.startswith('V') else 0 %}
+                                        <span class="difficulty-score difficulty-{{ 
+                                            '1-3' if v_level <= 2 else 
+                                            '4-6' if v_level <= 5 else 
+                                            '7-8' if v_level <= 8 else 
+                                            '9-10' }}">{{ grade }}</span>
+                                    {% else %}
+                                        {% set first_char = grade[0]|int if grade[0].isdigit() else 5 %}
+                                        <span class="difficulty-score difficulty-{{ 
+                                            '1-3' if first_char <= 5 else 
+                                            '4-6' if first_char <= 6 else 
+                                            '7-8' if first_char <= 7 else 
+                                            '9-10' }}">{{ grade }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Helper function to get difficulty level for comparison
+        function getDifficultyLevel(grade, category) {
+            if (category === 'Bouldering' && grade.startsWith('V')) {
+                const vLevel = parseInt(grade.substring(1));
+                if (vLevel <= 2) return 'beginner';
+                if (vLevel <= 5) return 'intermediate';
+                if (vLevel <= 8) return 'advanced';
+                return 'expert';
+            } else if (category === 'Sport Climbing') {
+                const firstChar = parseInt(grade[0]);
+                if (firstChar <= 5) return 'beginner';
+                if (firstChar <= 6) return 'intermediate';
+                if (firstChar <= 7) return 'advanced';
+                return 'expert';
+            }
+            return 'beginner';
+        }
+
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const difficultyFilter = document.getElementById('difficultyFilter');
+            const searchFilter = document.getElementById('searchFilter');
+            const routeRows = document.querySelectorAll('.route-row');
+
+            function filterRoutes() {
+                const selectedCategory = categoryFilter.value;
+                const selectedDifficulty = difficultyFilter.value;
+                const searchTerm = searchFilter.value.toLowerCase();
+
+                routeRows.forEach(row => {
+                    const category = row.dataset.category;
+                    const difficulty = row.dataset.difficulty;
+                    const name = row.dataset.name;
+
+                    let showRow = true;
+
+                    // Category filter
+                    if (selectedCategory && category !== selectedCategory) {
+                        showRow = false;
+                    }
+
+                    // Difficulty filter
+                    if (selectedDifficulty) {
+                        const routeDifficultyLevel = getDifficultyLevel(difficulty, category);
+                        if (routeDifficultyLevel !== selectedDifficulty) {
+                            showRow = false;
+                        }
+                    }
+
+                    // Search filter
+                    if (searchTerm && !name.includes(searchTerm)) {
+                        showRow = false;
+                    }
+
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            categoryFilter.addEventListener('change', filterRoutes);
+            difficultyFilter.addEventListener('change', filterRoutes);
+            searchFilter.addEventListener('input', filterRoutes);
+        });
+    </script>
+</body>
+</html> 
